@@ -6,4 +6,5 @@
 # 忽略环境变量文件
 /前端/vue-lenovo/.env*
 # 忽略日志文件
-/前端/vue-lenovo/*.log
+/前端/vue-lenovo/*.log/后端/LenovoShop/
+/.idea/
