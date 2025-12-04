@@ -1,0 +1,9 @@
+# 忽略 vue-lenovo 下的 node_modules
+/前端/vue-lenovo/node_modules/
+# 忽略前端编译产物（可选，根据你的项目调整）
+/前端/vue-lenovo/dist/
+/前端/vue-lenovo/build/
+# 忽略环境变量文件
+/前端/vue-lenovo/.env*
+# 忽略日志文件
+/前端/vue-lenovo/*.log
