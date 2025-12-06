@@ -1,15 +1,15 @@
 <template>
   <div>
-    <div class="search">
-      <el-input placeholder="请输入商品名称查询" style="width: 200px" v-model="name"></el-input>
-      <el-button type="info" plain style="margin-left: 10px" @click="load(1)">查询</el-button>
-      <el-button type="warning" plain style="margin-left: 10px" @click="reset">恢复</el-button>
-    </div>
-
-    <div class="operation">
-      <el-button type="primary" plain @click="handleAdd">发布商品</el-button>
-      <el-button type="danger" plain @click="delBatch">批量删除</el-button>
-    </div>
+    <manager-header>
+      <template v-slot:search>
+        <el-input placeholder="请输入商品名称查询" style="width: 200px" v-model="name"></el-input>
+        <el-button type="info" plain style="margin-left: 10px" @click="load(1)">查询</el-button>
+      </template>
+      <template v-slot:operation>
+        <el-button type="primary" plain @click="handleAdd">发布商品</el-button>
+        <el-button type="danger" plain @click="delBatch">批量删除</el-button>
+      </template>
+    </manager-header>
 
     <div class="table">
       <el-table :data="tableData" stripe  @selection-change="handleSelectionChange">
@@ -33,7 +33,7 @@
         <el-table-column label="操作" width="180" align="center">
           <template v-slot="scope">
             <el-button plain type="primary" @click="handleEdit(scope.row)" size="mini">编辑</el-button>
-            <el-button plain type="danger" size="mini" @click=del(scope.row.id)>删除</el-button>
+            <el-button plain type="danger" size="mini" @click="del(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -99,6 +99,7 @@
 
 <script>
 import E from 'wangeditor'
+import ManagerHeader from '@/components/manager/ManagerHeader.vue'
 
 let editor
 function initWangEditor(content) {	setTimeout(() => {
@@ -115,6 +116,7 @@ function initWangEditor(content) {	setTimeout(() => {
 
 export default {
   name: "Notice",
+  components: { ManagerHeader },
   data() {
     return {
       tableData: [],  // 所有的数据
@@ -243,10 +245,7 @@ export default {
         this.total = res.data?.total
       })
     },
-    reset() {
-      this.name = null
-      this.load(1)
-    },
+    
     handleCurrentChange(pageNum) {
       this.load(pageNum)
     },

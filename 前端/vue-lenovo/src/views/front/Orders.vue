@@ -130,12 +130,14 @@ export default {
     updateStatus(row, status) {
       this.form = row
       this.form.status = status
-      this.$request.put('/orders/update', this.form).then(res => {
+      return this.$request.put('/orders/update', this.form).then(res => {
         if (res.code === '200') {
           this.$message.success('操作成功')
+          this.loadOrders(this.pageNum)
         } else {
           this.$message.error(res.msg)
         }
+        return res
       })
     },
     addComment(row) {
@@ -149,11 +151,12 @@ export default {
         goodsId: this.form.goodsId,
         content: this.form.content,
       }
-      this.$request.post('/comment/add', data).then(res => {
+        this.$request.post('/comment/add', data).then(res => {
         if (res.code === '200') {
           this.$message.success('评价成功')
           this.fromVisible = false
-          this.updateStatus(this.form, '已评价')
+            // 保持订单已完成状态，不使用未知的 已评价 状态
+            this.updateStatus(this.form, '已完成')
           this.form = {}
         } else {
           this.$message.error(res.msg)

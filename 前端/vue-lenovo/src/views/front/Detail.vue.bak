@@ -1,0 +1,11 @@
+<template>
+	<div class="deprecation-note">该文件（Detail.vue.bak）为备份副本，已归档，使用 `Detail.vue` 为正式实现。</div>
+</template>
+
+<script>
+export default { name: 'DetailBakArchived' }
+</script>
+
+<style scoped>
+.deprecation-note { padding: 12px; color: #a00; background: #fff8f8; border-radius: 6px; }
+</style>

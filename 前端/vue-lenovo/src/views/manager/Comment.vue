@@ -1,10 +1,5 @@
 <template>
   <div>
-    <div class="search">
-      <el-input placeholder="请输入评论内容" style="width: 200px" v-model="content"></el-input>
-      <el-button type="info" plain style="margin-left: 10px" @click="load(1)">查询</el-button>
-      <el-button type="warning" plain style="margin-left: 10px" @click="reset">恢复</el-button>
-    </div>
 
     <div class="operation">
       <el-button type="danger" plain @click="delBatch">批量删除</el-button>
@@ -22,7 +17,7 @@
         <el-table-column prop="goodsName" label="商品" show-overflow-tooltip></el-table-column>
         <el-table-column label="操作" width="180" align="center">
           <template v-slot="scope">
-            <el-button plain type="primary" size="mini" v-if="scope.row.status === '待发货'" @click="updateStatus(scope.row, '待收货')">发货</el-button>
+            <!-- 注意：评论列表不应包含发货操作，该按钮是多余的并已移除 -->
             <el-button plain type="danger" size="mini" @click=del(scope.row.id)>删除</el-button>
           </template>
         </el-table-column>
@@ -52,7 +47,7 @@ export default {
       pageNum: 1,   // 当前的页码
       pageSize: 10,  // 每页显示的个数
       total: 0,
-      content: null,
+      // 搜索栏已移除：`content` 字段不再被使用
       form: {},
       user: JSON.parse(localStorage.getItem('xm-user') || '{}'),
       ids: []
@@ -113,11 +108,10 @@ export default {
     load(pageNum) {  // 分页查询
       if (pageNum) this.pageNum = pageNum
       this.$request.get('/comment/selectPage', {
-        params: {
-          pageNum: this.pageNum,
-          pageSize: this.pageSize,
-          content: this.content,
-        }
+          params: {
+            pageNum: this.pageNum,
+            pageSize: this.pageSize,
+          }
       }).then(res => {
         if (res.code === '200') {
           this.tableData = res.data?.list
@@ -127,10 +121,7 @@ export default {
         }
       })
     },
-    reset() {
-      this.content = null
-      this.load(1)
-    },
+    // reset() method removed because search input was removed
     handleCurrentChange(pageNum) {
       this.load(pageNum)
     },

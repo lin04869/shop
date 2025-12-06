@@ -111,22 +111,29 @@ export default {
     },
     save() {   // 保存按钮触发的逻辑  它会触发新增或者更新
       this.$refs.formRef.validate((valid) => {
-        if (valid) {
-          this.form.userId = this.user.id
-          this.$request({
-            url: this.form.id ? '/address/update' : '/address/add',
-            method: this.form.id ? 'PUT' : 'POST',
-            data: this.form
-          }).then(res => {
-            if (res.code === '200') {  // 表示成功保存
-              this.$message.success('保存成功')
-              this.loadAddress(1)
-              this.formVisible = false
-            } else {
-              this.$message.error(res.msg)  // 弹出错误的信息
-            }
-          })
+        if (!valid) return
+        if (!this.user || !this.user.id) {
+          this.$message.error('请先登录');
+          this.$router.push('/login');
+          return;
         }
+        this.form.userId = this.user.id
+        this.$request({
+          url: this.form.id ? '/address/update' : '/address/add',
+          method: this.form.id ? 'PUT' : 'POST',
+          data: this.form
+        }).then(res => {
+          if (res.code === '200') {  // 表示成功保存
+            this.$message({ message: '保存成功', type: 'success', duration: 1200 })
+            this.loadAddress(1)
+            this.formVisible = false
+          } else {
+            this.$message.error(res.msg)  // 弹出错误的信息
+          }
+        }).catch(err => {
+          console.error('save address error', err)
+          this.$message.error('保存失败，请重试')
+        })
       })
     },
     loadAddress(pageNum) {

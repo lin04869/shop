@@ -60,7 +60,7 @@ export default {
       if (value === '') {
         callback(new Error('请确认密码'))
       } else if (value !== this.user.newPassword) {
-        callback(new Error('确认密码错误'))
+        callback(new Error('密码错误'))
       } else {
         callback()
       }

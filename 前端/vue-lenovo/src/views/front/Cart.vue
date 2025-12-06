@@ -64,7 +64,7 @@
             </div>
             </div>
           <!-- 快速新增地址弹窗 -->
-  <el-dialog title="快速新增地址" :visible.sync="addressDialogVisible" width="40%" :close-on-click-modal="false" destroy-on-close>
+  <el-dialog title="新增地址" :visible.sync="addressDialogVisible" width="40%" :close-on-click-modal="false" destroy-on-close>
     <el-form :model="addressForm" :rules="addressRules" ref="addressFormRef" label-width="100px" style="padding-right: 50px">
       <el-form-item prop="username" label="收货人">
         <el-input v-model="addressForm.username" autocomplete="off"></el-input>
@@ -148,20 +148,33 @@ export default {
     saveAddress() {
       this.$refs.addressFormRef.validate(valid => {
         if (!valid) return
+        if (!this.user || !this.user.id) {
+          this.$message.error('请先登录');
+          this.$router.push('/login');
+          return;
+        }
         // 提交新增地址
         const payload = Object.assign({}, this.addressForm)
         // 确保有 userId
         payload.userId = this.user?.id
         this.$request.post('/address/add', payload).then(res => {
           if (res.code === '200') {
-            this.$message.success('保存成功')
-            // 刷新地址列表并尝试选中新添加的地址
-            this.loadAddress().then(() => {
-              // 尝试通过字段匹配找到新地址的 id
-              const found = this.addressData.find(a => a.username === payload.username && a.useraddress === payload.useraddress && a.phone === payload.phone)
-              if (found) this.addressId = found.id
-              this.addressDialogVisible = false
-            })
+            this.$message({ message: '保存成功', type: 'success', duration: 1200 })
+            // 如果后端返回了插入的 address（含 id），直接选中并关闭对话框
+            if (res.data && res.data.id) {
+              // 先刷新列表，再设置选中的 addressId
+              this.loadAddress().then(() => {
+                this.addressId = res.data.id
+                this.addressDialogVisible = false
+              })
+            } else {
+              // 回退策略：通过字段匹配找到新增地址
+              this.loadAddress().then(() => {
+                const found = this.addressData.find(a => a.useraddress === payload.useraddress && a.phone === payload.phone)
+                if (found) this.addressId = found.id
+                this.addressDialogVisible = false
+              })
+            }
           } else {
             this.$message.error(res.msg)
           }
@@ -193,7 +206,7 @@ export default {
     del(id) {
       this.$request.delete('/cart/delete/' + id).then(res => {
         if (res.code === '200') {
-          this.$message.success('移除成功')
+          this.$message({ message: '移除成功', type: 'success', duration: 1000 })
           this.loadGoods(1)
         } else {
           this.$message.error(res.msg)
@@ -206,7 +219,6 @@ export default {
     handleSelectionChange(rows) {
       this.totalPrice = 0
       this.selectedData = rows
-      // 计计算总价格
       this.selectedData.forEach(item => {
         this.totalPrice += (item.goodsPrice * item.num)
       })

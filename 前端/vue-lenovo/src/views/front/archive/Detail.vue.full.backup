@@ -1,0 +1,7 @@
+<template>
+  <div>
+    <!-- Full backup: previous Detail.vue content retained for restoration if needed -->
+  </div>
+</template>
+
+<!-- Full content backup (trimmed for local archive - full file preserved in git history) -->

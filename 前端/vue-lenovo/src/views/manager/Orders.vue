@@ -1,14 +1,14 @@
 <template>
   <div>
-    <div class="search">
-      <el-input placeholder="请输入订单编号" style="width: 200px" v-model="orderId"></el-input>
-      <el-button type="info" plain style="margin-left: 10px" @click="load(1)">查询</el-button>
-      <el-button type="warning" plain style="margin-left: 10px" @click="reset">恢复</el-button>
-    </div>
-
-    <div class="operation">
-      <el-button type="danger" plain @click="delBatch">批量删除</el-button>
-    </div>
+    <manager-header>
+      <template v-slot:search>
+        <el-input placeholder="请输入订单编号" style="width: 200px" v-model="orderId"></el-input>
+        <el-button type="info" plain style="margin-left: 10px" @click="load(1)">查询</el-button>
+      </template>
+      <template v-slot:operation>
+        <el-button type="danger" plain @click="delBatch">批量删除</el-button>
+      </template>
+    </manager-header>
 
     <div class="table">
       <el-table :data="tableData" stripe  @selection-change="handleSelectionChange">
@@ -39,7 +39,7 @@
         <el-table-column label="操作" width="180" align="center">
           <template v-slot="scope">
             <el-button plain type="primary" size="mini" v-if="scope.row.status === '待发货'" @click="updateStatus(scope.row, '待收货')">发货</el-button>
-            <el-button plain type="danger" size="mini" @click=del(scope.row.id)>删除</el-button>
+            <el-button plain type="danger" size="mini" @click="del(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -60,8 +60,10 @@
 </template>
 
 <script>
+import ManagerHeader from '@/components/manager/ManagerHeader.vue'
 export default {
   name: "Notice",
+  components: { ManagerHeader },
   data() {
     return {
       tableData: [],  // 所有的数据
@@ -88,7 +90,7 @@ export default {
   },
   methods: {
     save() {   // 保存按钮触发的逻辑  它会触发新增或者更新
-      this.$request({
+      return this.$request({
         url: this.form.id ? '/orders/update' : '/orders/add',
         method: this.form.id ? 'PUT' : 'POST',
         data: this.form
@@ -100,6 +102,7 @@ export default {
         } else {
           this.$message.error(res.msg)  // 弹出错误的信息
         }
+        return res
       })
     },
     del(id) {   // 单个删除
@@ -152,10 +155,7 @@ export default {
         }
       })
     },
-    reset() {
-      this.orderId = null
-      this.load(1)
-    },
+    
     handleCurrentChange(pageNum) {
       this.load(pageNum)
     },
@@ -165,7 +165,9 @@ export default {
     updateStatus(row, status) {
       this.form = row;
       this.form.status = status
-      this.save()
+      this.save().then(() => {
+        this.load(this.pageNum)
+      })
     }
   }
 }

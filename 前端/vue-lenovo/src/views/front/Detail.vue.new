@@ -1,0 +1,189 @@
+<template>
+  <div class="deprecation-note">该文件（Detail.vue.new）已归档并被替换，请使用 `Detail.vue`（canonical）。</div>
+</template>
+
+<script>
+export default { name: 'DetailVuenNewStub' }
+</script>
+
+<style scoped>
+.deprecation-note { padding: 12px; color: #333; background: #fff9ef; border-radius: 6px }
+</style>
+<!-- Archive placeholder: original content moved to `archive/Detail.vue.new.backup.vue` -->
+    <div class="detail-wrapper">
+      <div class="detail-inner">
+        <el-row class="detail-top-row" :gutter="20">
+          <el-col :span="12">
+            <div class="goods-img-wrap">
+              <img :src="goodsData.img || '/favicon.ico'" alt="商品图" class="goods-main-img" />
+            </div>
+          </el-col>
+          <el-col :span="12" class="goods-info-col">
+            <div class="goods-title">{{ goodsData.name }}</div>
+
+            <div class="detail-meta">
+              <div class="meta-row"><span class="label">店铺：</span><a :href="'/front/business?id=' + goodsData.businessId">{{ goodsData.businessName }}</a></div>
+              <div class="meta-row"><span class="label">产品类别：</span><span class="boxed-text">联想Lenovo笔记本电脑</span></div>
+              <div class="meta-row"><span class="label">操作系统：</span><span class="boxed-text">{{ goodsOs || '—' }}</span></div>
+              <div class="meta-row"><span class="label">配 置：</span><span class="boxed-text">{{ goodsConfig || '—' }}</span></div>
+              <div class="meta-row"><span class="label">颜 色：</span><span class="boxed-text">{{ goodsColor || '—' }}</span></div>
+            </div>
+
+            <div class="price">价格：<span class="price-value">{{ goodsData.price }}</span></div>
+
+            <div class="actions">
+              <el-button class="btn-fav" type="warning" @click="collect">收藏</el-button>
+              <el-button class="btn-cart" type="danger" @click="addCart">加入购物车</el-button>
+            </div>
+          </el-col>
+        </el-row>
+
+        <el-row class="comment-row" :gutter="20">
+          <el-col :span="12"></el-col>
+          <el-col :span="12">
+            <el-tabs v-model="activeName" @tab-click="handleClick">
+              <el-tab-pane label="宝贝评价" name="comments">
+                <div class="comment-list">
+                  <div v-if="!commentData || commentData.length === 0" class="no-comment">暂无评论</div>
+                  <div class="comment-item" v-for="(item, index) in commentData" :key="item.id || index">
+                    <div class="comment-head">
+                      <img :src="item.userAvatar || '/favicon.ico'" class="comment-avatar" />
+                      <div class="comment-meta">
+                        <div class="comment-username">{{ item.userName }}</div>
+                        <div class="comment-time">{{ item.time }}</div>
+                      </div>
+                    </div>
+                    <div class="comment-content">{{ item.content }}</div>
+                  </div>
+                </div>
+              </el-tab-pane>
+            </el-tabs>
+          </el-col>
+        </el-row>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    const goodsId = this.$route.query.id;
+    return {
+      user: JSON.parse(localStorage.getItem('xm-user') || '{}'),
+      goodsId,
+      goodsData: {},
+      goodsOs: '',
+      goodsConfig: '',
+      goodsColor: '',
+      activeName: 'comments',
+      commentData: [],
+    };
+  },
+  mounted() {
+    this.loadGoods();
+    this.loadComments();
+  },
+  methods: {
+    loadGoods() {
+      if (!this.goodsId) return;
+      this.$request.get('/goods/selectById?id=' + this.goodsId).then(res => {
+        if (res.code === '200') {
+          this.goodsData = res.data || {};
+          const parsed = this.parseDescription(this.goodsData.description || this.goodsData.name);
+          this.goodsOs = parsed.os;
+          this.goodsConfig = parsed.configuration;
+          this.goodsColor = parsed.color;
+        } else {
+          this.$message.error(res.msg);
+        }
+      }).catch(() => {});
+    },
+    parseDescription(detail) {
+      if (!detail) return { os: '', configuration: '', color: '' };
+      const normalized = detail.replace(/[、，,；;|]/g, '/').replace(/\s+/g, ' ').trim();
+      const tokens = normalized.split('/').map(t => t.trim()).filter(Boolean);
+      let os = '', configuration = '', color = '';
+      const colors = ['黑','白','银','灰','粉','红','蓝','金','绿','rose','silver','white','black','pink','red','blue','gold','gray'];
+      const modifiers = ['深', '浅'];
+      for (let i = 0; i < tokens.length; i++) {
+        const t = tokens[i];
+        if (!os && /windows|linux|mac|android|ios/i.test(t)) { os = t; continue; }
+        if (!configuration && /(i[3579]|ryzen|intel|amd|\d+GB|\d+TB|SSD|HDD|MX|RTX|GTX|16G|32G|512G|1TB|2TB)/i.test(t)) { configuration = t; continue; }
+        const lower = t.toLowerCase();
+        if (!color && colors.some(c => lower.includes(c))) { color = t; continue; }
+        if (!color && modifiers.includes(t)) {
+          const next = tokens[i + 1] || '';
+          if (next && colors.some(c => next.toLowerCase().includes(c))) { color = t + next; i++; continue; }
+          const prev = tokens[i - 1] || '';
+          if (prev && colors.some(c => prev.toLowerCase().includes(c))) { color = t + prev; continue; }
+        }
+        if (!color && colors.some(c => lower.includes(c))) {
+          const prevToken = tokens[i - 1] || '';
+          if (prevToken && modifiers.includes(prevToken)) { color = prevToken + t; }
+          else { color = t; }
+          continue;
+        }
+        configuration = configuration ? (configuration + ' / ' + t) : t;
+      }
+      return { os, configuration, color };
+    },
+    loadComments() {
+      if (!this.goodsId) return;
+      this.$request.get('/comment/selectByGoodsId?id=' + this.goodsId).then(res => {
+        if (res.code === '200') {
+          try {
+            const list = (res.data || []).slice();
+            list.sort((a, b) => (new Date(b.time).getTime() || 0) - (new Date(a.time).getTime() || 0));
+            this.commentData = list;
+          } catch (e) { this.commentData = res.data || []; }
+        } else { this.$message.error(res.msg); }
+      }).catch(() => {});
+    },
+    handleClick(tab) { this.activeName = tab.name; },
+    collect() { if (!this.user || !this.user.id) { this.$message.warning('请先登录'); this.$router.push('/login'); return; } this.$request.post('/collect/add', { userId: this.user.id, businessId: this.goodsData.businessId, goodsId: this.goodsId }).then(res => { if (res.code === '200') this.$message.success('收藏成功'); else this.$message.error(res.msg); }).catch(() => {}); },
+    addCart() { if (!this.user || !this.user.id) { this.$message.warning('请先登录'); this.$router.push('/login'); return; } this.$request.post('/cart/add', { num: 1, userId: this.user.id, goodsId: this.goodsId, businessId: this.goodsData.businessId }).then(res => { if (res.code === '200') this.$message.success('操作成功'); else this.$message.error(res.msg); }).catch(() => {}); },
+  }
+}
+</script>
+
+<style scoped>
+/* Keep the same style as in DetailFixed.vue */
+.detail-wrapper { width: 100%; background-color: #fff; min-height: 640px; border-radius: 12px; }
+.detail-inner { padding: 12px 12px; width: 82%; margin: 12px auto; }
+.goods-img-wrap { display:flex; align-items:center; justify-content:center; width:100%; }
+.goods-main-img { width: auto; max-width: 460px; height: auto; object-fit: contain; border-radius: 8px; }
+.goods-info-col { padding-left: 18px; }
+.goods-title { font-size: 18px; font-weight: 700; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp:2; -webkit-box-orient: vertical; }
+.detail-meta { margin-top: 6px; }
+.meta-row { margin-top:4px; display:flex; align-items:center; }
+.label { width:80px; color:#666; font-size:14px; }
+.boxed-text { background:#f7f7f7; padding: 6px 10px; border-radius: 6px; font-size:14px; }
+.price { color:red; margin-top: 8px; font-size:16px; }
+.price-value { font-size: 20px; font-weight:700 }
+.actions { margin-top: 6px; display:flex; gap:10px; justify-content:flex-end; }
+.comment-row { margin-top: 6px; }
+.comment-list { padding-top:6px; }
+.no-comment { color:#999; text-align:left; padding:12px 0; }
+.comment-item { margin-bottom:10px; }
+.comment-head { display:flex; align-items:center; }
+.comment-avatar { height:36px; width:36px; border-radius:50%; margin-right:10px; }
+.comment-meta { margin-left: 6px; }
+.comment-username { font-weight:700; font-size:15px; }
+.comment-time { color:#888; font-size:12px; }
+.comment-content { margin-top:6px; padding-left:46px; font-size:15px; color:#333; }
+
+/* Top row (image + info) center vertically */
+.detail-top-row { display:flex; align-items:center; }
+
+@media (max-width: 768px) {
+  .detail-inner { width: 95%; }
+  .goods-img-wrap { justify-content: flex-start; }
+  .goods-main-img { max-width: 100%; width: 100%; height: auto; }
+  .comment-avatar { height: 28px; width: 28px; }
+  .comment-content { padding-left:36px; }
+  .goods-title { font-size: 16px; }
+}
+
+.goods-main-img { max-height: 520px; }
+</style>

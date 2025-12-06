@@ -82,3 +82,23 @@
     height: 40px; /* 设置一个固定高度，确保框的大小适中 */
     box-sizing: border-box; /* 包括内边距和边框在内计算元素的总宽度和高度 */
 }
+
+/* 收藏 和 加入购物车 按钮自定义颜色 */
+.el-button.btn-fav {
+    background-color: #ff8a65 !important; /* warm orange */
+    border-color: #ff8a65 !important;
+    color: #fff !important;
+}
+.el-button.btn-fav:hover {
+    background-color: #ff7a4d !important;
+    border-color: #ff7a4d !important;
+}
+.el-button.btn-cart {
+    background-color: #10b981 !important; /* green */
+    border-color: #10b981 !important;
+    color: #fff !important;
+}
+.el-button.btn-cart:hover {
+    background-color: #059669 !important;
+    border-color: #059669 !important;
+}
