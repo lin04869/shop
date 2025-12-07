@@ -1,14 +1,12 @@
 function parseGoodsInfo(name) {
   if (!name) return { os: '', configuration: '', color: '' };
   
-  // 第一步：先按斜杠分割成完整段落（用于提取整段颜色）
   const normalizedForSegment = name
     .replace(/[、，,；;|]/g, '/')
     .replace(/\s*\/\s*/g, '/')
     .trim();
   const segments = normalizedForSegment.split('/').map(s => s.trim()).filter(Boolean);
 
-  // 第二步：保留你原有token拆分逻辑（用于OS解析）
   const normalized = name.replace(/[、，,；;|]/g, '/').replace(/\s*\/\s*/g, '/').replace(/\s+/g, ' ').trim();
   const tokens = normalized.split(/[\/\s]+/).map(t => t.trim()).filter(Boolean);
   
@@ -18,10 +16,10 @@ function parseGoodsInfo(name) {
 
   let os = '', configuration = '', color = '';
 
-  // 核心修改：先提取斜杠包裹的整段颜色
+  // 先提取整段颜色
   if (!color) {
     for (const seg of segments) {
-      // 只要段落包含颜色/修饰符关键字，就取整段作为颜色
+      // 段落包含颜色/修饰符关键字，取整段作为颜色
       if (colors.some(c => seg.includes(c)) || modifiers.some(m => seg.includes(m))) {
         color = seg;
         break;
@@ -29,7 +27,6 @@ function parseGoodsInfo(name) {
     }
   }
 
-  // 保留你原有OS解析逻辑（完全不变）
   for (let i = 0; i < tokens.length; i++) {
     const t = tokens[i];
     const osMatch = t.match(osRegex);
@@ -60,24 +57,6 @@ function parseGoodsInfo(name) {
       continue;
     }
 
-    // 注释掉原有颜色解析逻辑（已用整段颜色替代）
-    // if (!color && colors.some(c => t.includes(c))) {
-    //   const prevToken = tokens[i - 1] || '';
-    //   if (prevToken && modifiers.includes(prevToken)) {
-    //     color = prevToken + t;
-    //   } else {
-    //     color = t;
-    //   }
-    //   continue;
-    // }
-    // if (!color && modifiers.includes(t)) {
-    //   const next = tokens[i + 1] || '';
-    //   if (next && colors.some(c => next.includes(c))) {
-    //     color = t + next; i++; continue;
-    //   }
-    // }
-
-    // 配置信息：排除已识别的颜色段
     if (!segments.includes(t) || (segments.includes(t) && t !== color)) {
       configuration = configuration ? (configuration + ' / ' + t) : t;
     }
