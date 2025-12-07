@@ -12,7 +12,6 @@
         <router-link to="/front/home" class="nav-link" exact>首页</router-link>
         <router-link to="/front/orders" class="nav-link">订单</router-link>
         <router-link to="/front/cart" class="nav-link">购物车</router-link>
-        <router-link to="/front/collect" class="nav-link">收藏</router-link>
       </nav>
 
       <div class="header-right">

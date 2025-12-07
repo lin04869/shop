@@ -2,7 +2,6 @@
   <div class="main-content">
     <div class="detail-wrapper">
       <div class="detail-inner">
-        <!-- 商品图片 + 基础信息行 -->
         <el-row class="detail-top-row" :gutter="20">
           <el-col :span="12">
             <div class="goods-img-wrap">
@@ -38,9 +37,51 @@
             <div class="price">价格：<span class="price-value">{{ goodsData.price }}</span></div>
 
             <div class="actions">
-              <el-button class="btn-fav" type="warning" @click="collect">收藏</el-button>
+              <!-- 立即购买替代原收藏按钮 -->
+              <el-input-number v-model="quantity" :min="1" :max="99" style="margin-right:10px"></el-input-number>
+              <el-button class="btn-buy" type="primary" @click="openBuyDialog">立即购买</el-button>
               <el-button class="btn-cart" type="danger" @click="addCart">加入购物车</el-button>
             </div>
+            
+              <!-- 立即购买弹窗 -->
+              <el-dialog title="确认购买" :visible.sync="buyDialogVisible" width="40%" :close-on-click-modal="false" destroy-on-close>
+                <div style="padding: 8px 10px">
+                  <div style="margin-bottom: 10px">商品：{{ goodsData.name }}</div>
+                  <div style="margin-bottom: 10px">单价：￥{{ goodsData.price }}</div>
+                  <div style="margin-bottom: 10px">数量：<el-input-number v-model="quantity" :min="1" :max="99"></el-input-number></div>
+                  <div style="margin-bottom: 10px">请选择收货地址：
+                    <el-select v-model="addressId" placeholder="请选择收货地址" style="width: 60%">
+                      <el-option v-for="(item, index) in addressData" :label="item.username + ' - ' + item.useraddress + ' - ' + item.phone" :value="item.id" :key="index"></el-option>
+                    </el-select>
+                    <el-button type="primary" size="mini" @click="openQuickAdd">快速新增</el-button>
+                    <el-button type="warning" size="mini" @click="$router.push('/front/address')">管理地址</el-button>
+                  </div>
+                  <div style="margin-top: 10px">合计：￥{{ (goodsData.price || 0) * (quantity || 1) }}</div>
+                </div>
+                <div slot="footer" class="dialog-footer">
+                  <el-button @click="buyDialogVisible=false">取消</el-button>
+                  <el-button type="primary" @click="confirmBuy">立即下单</el-button>
+                </div>
+              </el-dialog>
+
+              <!-- 快速新增地址弹窗 -->
+              <el-dialog title="新增地址" :visible.sync="addressDialogVisible" width="40%" :close-on-click-modal="false" destroy-on-close>
+                <el-form :model="addressForm" :rules="addressRules" ref="addressFormRef" label-width="100px" style="padding-right: 50px">
+                  <el-form-item prop="username" label="收货人">
+                    <el-input v-model="addressForm.username" autocomplete="off"></el-input>
+                  </el-form-item>
+                  <el-form-item prop="useraddress" label="收货地址">
+                    <el-input v-model="addressForm.useraddress" autocomplete="off"></el-input>
+                  </el-form-item>
+                  <el-form-item prop="phone" label="联系电话">
+                    <el-input v-model="addressForm.phone" autocomplete="off"></el-input>
+                  </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                  <el-button @click="addressDialogVisible = false">取 消</el-button>
+                  <el-button type="primary" @click="saveAddress">确 定</el-button>
+                </div>
+              </el-dialog>
           </el-col>
         </el-row>
 
@@ -77,13 +118,31 @@ export default {
   data() {
     return {
       goodsData: {},        // 商品基础数据
-      goodsId: '',          // 商品ID
+      goodsId: '',          // 商品名称
       goodsOs: '',          // 操作系统
       goodsConfig: '',      // 配置
       goodsColor: '',       // 颜色
-      commentData: [],      // 评论数据
+      commentData: [],      // 评论
       activeName: 'comments', // 标签页默认选中
-      user: JSON.parse(localStorage.getItem('xm-user') || '{}') // 当前登录用户
+      user: JSON.parse(localStorage.getItem('xm-user') || '{}'), // 当前登录用户
+      // 新增立即购买相关数据
+      quantity: 1,
+      buyDialogVisible: false,
+      addressId: null,
+      addressData: [],
+      addressDialogVisible: false,
+      addressForm: {
+        id: null,
+        userId: null,
+        username: '',
+        useraddress: '',
+        phone: ''
+      },
+      addressRules: {
+        username: [ { required: true, message: '请输入收货人', trigger: 'blur' } ],
+        useraddress: [ { required: true, message: '请输入收货地址', trigger: 'blur' } ],
+        phone: [ { required: true, message: '请输入联系电话', trigger: 'blur' } ]
+      }
     };
   },
   created() {
@@ -92,6 +151,7 @@ export default {
     if (this.goodsId) {
       this.loadGoodsData();
       this.loadComments();
+        this.loadAddress();
       // 监听localStorage更新评论
       window.addEventListener('storage', this.onStorageEvent);
     }
@@ -106,7 +166,7 @@ export default {
   parseGoodsInfo(name) {
     if (!name) return { os: '', configuration: '', color: '' };
     
-    // 统一用斜杠分隔并清洗数据
+    // 统一用/分隔，清洗数据
     const normalized = name
       .replace(/[、，,；;|]/g, '/')  // 统一分隔符为斜杠
       .replace(/\s*\/\s*/g, '/')    // 清除斜杠前后空格
@@ -120,7 +180,6 @@ export default {
     
     let os = '', configuration = '', color = '';
     
-    // 遍历所有斜杠分隔的段落
     segments.forEach(segment => {
       // 1. 优先匹配颜色段（包含任何颜色关键字的整段都作为颜色）
       if (!color && colorKeywords.some(keyword => segment.includes(keyword))) {
@@ -134,7 +193,7 @@ export default {
           .replace(/win10/i, 'Windows 10')
           .trim();
       }
-      // 3. 剩余段落作为配置信息
+      // 3. 剩余段落为配置信息
       else {
         configuration = configuration ? `${configuration} / ${segment}` : segment;
       }
@@ -197,26 +256,93 @@ export default {
     handleClick(tab) {
       this.activeName = tab.name;
     },
-    // 收藏商品
-    collect() {
+    // 立即购买
+    openBuyDialog() {
       if (!this.user || !this.user.id) {
         this.$message.warning('请先登录');
         this.$router.push('/login');
         return;
       }
-      this.$request.post('/collect/add', { 
-        userId: this.user.id, 
-        businessId: this.goodsData.businessId, 
-        goodsId: this.goodsId 
-      }).then(res => {
+      this.buyDialogVisible = true;
+      // 确保 address 数据已加载
+      this.loadAddress();
+    },
+    // 下单操作
+    confirmBuy() {
+      if (!this.addressId) {
+        this.$message.warning('请选择收货地址');
+        return;
+      }
+      // 重用 cart 接口结构
+      const item = {
+        goodsId: this.goodsId,
+        goodsName: this.goodsData.name,
+        goodsImg: this.goodsData.img,
+        goodsPrice: this.goodsData.price,
+        num: this.quantity,
+        businessId: this.goodsData.businessId
+      };
+      const payload = {
+        userId: this.user.id,
+        addressId: this.addressId,
+        status: '待发货',
+        cartData: [item]
+      }
+      this.$request.post('/orders/add', payload).then(res => {
         if (res.code === '200') {
-          this.$message.success('收藏成功');
+          this.$message.success('下单成功');
+          this.buyDialogVisible = false;
+          // 跳转到我的订单
+          this.$router.push('/front/orders');
+        } else {
+          this.$message.error(res.msg || '下单失败');
+        }
+      }).catch(err => {
+        console.error('confirmBuy error:', err);
+        this.$message.error('下单失败，请重试');
+      });
+    },
+    // 地址加载和管理
+    loadAddress() {
+      if (!this.user || !this.user.id) return;
+      return this.$request.get('/address/selectAll', { params: { userId: this.user.id }}).then(res => {
+        if (res.code === '200') {
+          this.addressData = res.data || [];
         } else {
           this.$message.error(res.msg);
         }
-      }).catch(() => {
-        this.$message.error('收藏失败，请重试');
+        return res;
+      }).catch(err => {
+        console.error('loadAddress error:', err);
       });
+    },
+    openQuickAdd() {
+      this.addressForm = { id: null, userId: this.user?.id, username: '', useraddress: '', phone: '' };
+      this.addressDialogVisible = true;
+    },
+    saveAddress() {
+      this.$refs.addressFormRef.validate(valid => {
+        if (!valid) return;
+        if (!this.user || !this.user.id) {
+          this.$message.error('请先登录');
+          this.$router.push('/login');
+          return;
+        }
+        const payload = Object.assign({}, this.addressForm);
+        payload.userId = this.user?.id;
+        this.$request.post('/address/add', payload).then(res => {
+          if (res.code === '200') {
+            this.$message.success('保存成功');
+            if (res.data && res.data.id) {
+              this.loadAddress().then(() => { this.addressId = res.data.id; this.addressDialogVisible = false; })
+            } else {
+              this.loadAddress().then(() => { this.addressDialogVisible = false; })
+            }
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+      })
     },
     // 加入购物车
     addCart() {

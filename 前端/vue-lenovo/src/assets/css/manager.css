@@ -241,14 +241,14 @@ th.el-table__cell {
 .el-button { color: var(--text-primary) }
 .el-link { color: #ff8a65 }
 
-/* Button classes used across pages */
-.btn-fav {
-    background-color: var(--accent-warm) !important;
-    border-color: var(--accent-warm) !important;
+.el-button.btn-buy {
+    background-color: #3b82f6 !important; /* blue for quick buy */
+    border-color: #3b82f6 !important;
     color: #fff !important;
 }
-.btn-fav:hover {
-    background-color: var(--accent-warm-08) !important;
+.el-button.btn-buy:hover {
+    background-color: #2563eb !important;
+    border-color: #2563eb !important;
 }
 .btn-cart {
     background-color: var(--accent-green) !important;

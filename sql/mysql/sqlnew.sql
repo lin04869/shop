@@ -131,24 +131,6 @@ ALTER TABLE `cart`
   ADD CONSTRAINT `cart_ibfk_2` FOREIGN KEY (`goods_id`) REFERENCES `goods` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `cart_ibfk_3` FOREIGN KEY (`business_id`) REFERENCES `business` (`id`);
 
--- 7.1 收藏表（collect）
-DROP TABLE IF EXISTS `collect`;
-CREATE TABLE `collect` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '收藏ID',
-  `user_id` int(11) NOT NULL COMMENT '用户ID',
-  `goods_id` int(11) NOT NULL COMMENT '商品ID',
-  `business_id` int(11) DEFAULT 1 COMMENT '店铺ID(固定为1)',
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  KEY `goods_id` (`goods_id`),
-  KEY `business_id` (`business_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='收藏表';
-
--- 收藏表外键
-ALTER TABLE `collect`
-  ADD CONSTRAINT `collect_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `collect_ibfk_2` FOREIGN KEY (`goods_id`) REFERENCES `goods` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `collect_ibfk_3` FOREIGN KEY (`business_id`) REFERENCES `business` (`id`);
 
 -- 8. 订单表
 DROP TABLE IF EXISTS `orders`;
@@ -237,13 +219,11 @@ ALTER TABLE `notice`
 -- 设置商家ID为1
 UPDATE goods SET business_id = 1 WHERE business_id IS NULL OR business_id != 1;
 UPDATE cart SET business_id = 1 WHERE business_id IS NULL OR business_id != 1;
-UPDATE collect SET business_id = 1 WHERE business_id IS NULL OR business_id != 1;
 UPDATE comment SET business_id = 1 WHERE business_id IS NULL OR business_id != 1;
 UPDATE orders SET business_id = 1 WHERE business_id IS NULL OR business_id != 1;
 
 -- 设置商家ID字段默认值1
 ALTER TABLE goods MODIFY business_id int(11) DEFAULT 1;
 ALTER TABLE cart MODIFY business_id int(11) DEFAULT 1;
-ALTER TABLE collect MODIFY business_id int(11) DEFAULT 1;
 ALTER TABLE comment MODIFY business_id int(11) DEFAULT 1;
 ALTER TABLE orders MODIFY business_id int(11) DEFAULT 1;

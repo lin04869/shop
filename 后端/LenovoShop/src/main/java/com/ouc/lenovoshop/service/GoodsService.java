@@ -29,8 +29,6 @@ public class GoodsService {
     @Resource
     private UserMapper userMapper;
     @Resource
-    private CollectMapper collectMapper;
-    @Resource
     private CommentMapper commentMapper;
     @Resource
     private CartMapper cartMapper;
@@ -130,17 +128,16 @@ public class GoodsService {
             return new ArrayList<>();
         }
         // 用户的哪些行为可以认为他跟商品产生了关系？收藏、加入购物车、下单、评论
-        // 1. 获取所有的收藏信息
-        List<Collect> allCollects = collectMapper.selectAll(null);
-        // 2. 获取所有的购物车信息
+
+        // 1. 获取所有的购物车信息
         List<Cart> allCarts = cartMapper.selectAll(null);
-        // 3. 获取所有的订单信息
+        // 2. 获取所有的订单信息
         List<Orders> allOrders = ordersMapper.selectAllOKOrders();
-        // 4. 获取所有的评论信息
+        // 3. 获取所有的评论信息
         List<Comment> allComments = commentMapper.selectAll(null);
-        // 5. 获取所有的用户信息
+        // 4. 获取所有的用户信息
         List<User> allUsers = userMapper.selectAll(null);
-        // 6. 获取所有的商品信息
+        // 5. 获取所有的商品信息
         List<Goods> allGoods = goodsMapper.selectAll(null);
 
         // 定义一个存储每个商品和每个用户关系的List
@@ -154,22 +151,17 @@ public class GoodsService {
             for (User user : allUsers) {
                 Integer userId = user.getId();
                 int index = 1;
-                // 1. 判断该用户有没有收藏该商品，收藏的权重我们给 1
-                Optional<Collect> collectOptional = allCollects.stream().filter(x -> x.getGoodsId().equals(goodsId) && x.getUserId().equals(userId)).findFirst();
-                if (collectOptional.isPresent()) {
-                    index += 1;
-                }
-                // 2. 判断该用户有没有给该商品加入购物车，加入购物车的权重我们给 2
+                // 1. 是否加入购物车
                 Optional<Cart> cartOptional = allCarts.stream().filter(x -> x.getGoodsId().equals(goodsId) && x.getUserId().equals(userId)).findFirst();
                 if (cartOptional.isPresent()) {
                     index += 2;
                 }
-                // 3. 判断该用户有没有对该商品下过单（已完成的订单），订单的权重我们给 3
+                // 2. 是否下过单
                 Optional<Orders> ordersOptional = allOrders.stream().filter(x -> x.getGoodsId().equals(goodsId) && x.getUserId().equals(userId)).findFirst();
                 if (ordersOptional.isPresent()) {
                     index += 3;
                 }
-                // 4. 判断该用户有没有对该商品评论过，评论的权重我们给 2
+                // 3. 是否评论过
                 Optional<Comment> commentOptional = allComments.stream().filter(x -> x.getGoodsId().equals(goodsId) && x.getUserId().equals(userId)).findFirst();
                 if (commentOptional.isPresent()) {
                     index += 2;
@@ -181,22 +173,12 @@ public class GoodsService {
             }
         }
 
-        // 数据准备结束后，就把这些数据一起喂给这个推荐算法
         List<Integer> goodsIds = UserCF.recommend(currentUser.getId(), data);
-        // 把商品id转换成商品
+
         List<Goods> recommendResult = goodsIds.stream().map(goodsId -> allGoods.stream()
                         .filter(x -> x.getId().equals(goodsId)).findFirst().orElse(null))
                 .limit(10).collect(Collectors.toList());
 
-//        if (CollectionUtil.isEmpty(recommendResult)) {
-//            // 随机给它推荐10个
-//            return getRandomGoods(10);
-//        }
-//        if (recommendResult.size() < 10) {
-//            int num = 10 - recommendResult.size();
-//            List<Goods> list = getRandomGoods(num);
-//            result.addAll(list);
-//        }
         return recommendResult;
     }
 
