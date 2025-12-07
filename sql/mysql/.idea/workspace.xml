@@ -2,17 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6b52dc82-3856-450c-b9b2-5ccd330f45cb" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/sqlfinal.sql" beforeDir="false" afterPath="$PROJECT_DIR$/sqlfinal.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../前端/vue-lenovo/src/assets/imgs/banner004.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../前端/vue-lenovo/src/assets/imgs/banner005.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../前端/vue-lenovo/src/assets/imgs/banner006.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/front/Cart.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/front/Cart.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/front/Detail.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/front/Detail.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/front/Detail.vue.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/front/Detail.vue.corrupt_backup" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/front/Detail.vue.new" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/front/DetailFixed.vue" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/front/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/front/Home.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/front/Orders.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/front/Orders.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/front/Person.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/front/Person.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/manager/Comment.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/manager/Comment.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/manager/Orders.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/manager/Orders.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/front/archive/Detail.vue.full.backup" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/front/archive/Detail.vue.pre-cleanup" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/front/archive/Detail.vue.pre-rename.backup" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/front/archive/DetailFixed.vue.backup" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../前端/vue-lenovo/src/views/front/archive/DetailFixed.vue.bak" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../../后端/LenovoShop" beforeDir="false" afterPath="$PROJECT_DIR$/../../后端/LenovoShop" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -23,9 +24,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 5
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
   <component name="ProjectId" id="36Qw42kqIctfKbiPFXFiGDEXZBt" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -37,7 +38,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "D:/course/lenovoshop/sql/mysql"
+    "last_opened_file_path": "D:/pythonProject"
   }
 }]]></component>
   <component name="SharedIndexes">

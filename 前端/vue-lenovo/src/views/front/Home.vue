@@ -3,7 +3,6 @@
     <div style="display: flex">
       <!-- <div class="left"></div> -->
       <div style="width: 100%; background-color: white; margin-bottom: 50px">
-        <!-- 保持顶部无额外间距，移除空占位 -->
         <div style="margin:0; padding:0; height:0"></div>
         <div style="margin: 0 25px;">
           <div style="flex: 5; margin-top: 0px">
@@ -20,7 +19,6 @@
             </div>
           </div>
 
-          <!-- 分类栏：放在轮播图下方 -->
           <!-- 公告列表：放在轮播图下方、分类栏之前，展示最近的几条公告 -->
           <div style="margin-top: 0; padding-top: 0;">
             <div class="section-title" style="margin-bottom:6px; font-weight:600">公告</div>
@@ -34,7 +32,7 @@
             </div>
             <div v-else style="color:#999; font-size:12px">暂无公告</div>
           </div>
-          <!-- 分类标题：紧接在公告之后 -->
+
           <div style="margin-top:10px;">
             <div class="section-title" style="margin-top:0">商品分类</div>
           </div>
@@ -66,7 +64,6 @@
           </div>
         </div>
         <div class="white-block"></div>
-        <!-- 去掉 “正在热销” 部分，改为紧接在公告后显示随机推荐 -->
       </div>
       <!-- <div class="right"></div> -->
     </div>
@@ -95,7 +92,7 @@ export default {
     this.loadType();
     this.loadNotice();
     this.loadGoods();
-    // 监听其他页面（如管理端）新增公告的广播，自动刷新
+    // 监听管理端新增公告的广播，自动刷新
     this.__noticeUpdateHandler = (e) => {
       if (e.key === 'noticeUpdate') {
         this.loadNotice();
@@ -108,7 +105,7 @@ export default {
       window.removeEventListener('storage', this.__noticeUpdateHandler);
     }
   },
-  // methods：本页面所有的点击事件或者其他函数定义区
+
   methods: {
     loadRecommend() {
       this.$request.get('/goods/recommend').then((res) => {
@@ -157,7 +154,7 @@ export default {
       location.href = url;
     },
   },
-  // 计算属性：放到 methods 外部
+
   computed: {
     shuffledGoods() {
       if (!this.goodsData || !this.goodsData.length) return [];
@@ -196,9 +193,7 @@ img {
   display: block;
   object-fit: cover;
 }
-/*
-// 注: 注释掉的背景图片相关样式被移除因为不再使用。若需要，可以在 assets/imgs 中恢复这些图片并取消注释。保持注释仅供历史记录。
-*/
+
 .el-col-5 {
   width: 20%;
   max-width: 20%;
@@ -231,4 +226,3 @@ img {
   background-color: white; /* 设置背景颜色为白色 */
 }
 </style>
-

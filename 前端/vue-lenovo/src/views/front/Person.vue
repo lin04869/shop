@@ -19,9 +19,6 @@
         <el-form-item label="用户名" prop="username">
           <el-input v-model="user.username" placeholder="用户名" disabled></el-input>
         </el-form-item>
-        <el-form-item label="昵称" prop="name">
-          <el-input v-model="user.name" placeholder="昵称"></el-input>
-        </el-form-item>
         <el-form-item label="电话" prop="phone">
           <el-input v-model="user.phone" placeholder="电话"></el-input>
         </el-form-item>
@@ -92,8 +89,10 @@ export default {
         if (res.code === '200') {
           // 成功更新
           this.$message.success('保存成功')
-          // 更新浏览器缓存里的用户信息
-          localStorage.setItem('xm-user', JSON.stringify(this.user))
+          // 更新浏览器缓存里的用户信息（保留 token/role）
+          const localUser = JSON.parse(localStorage.getItem('xm-user') || '{}')
+          const merged = Object.assign({}, localUser, this.user)
+          localStorage.setItem('xm-user', JSON.stringify(merged))
 
           // 触发父级的数据更新
           this.$emit('update:user')
@@ -115,7 +114,6 @@ export default {
         if (valid) {
           this.$request.put('/updatePassword', this.user).then(res => {
             if (res.code === '200') {
-              // 成功更新
               this.$message.success('修改密码成功')
               this.$router.push('/login')
             } else {

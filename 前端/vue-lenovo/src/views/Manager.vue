@@ -16,7 +16,7 @@
         <el-dropdown placement="bottom">
           <div class="avatar">
             <img :src="user.avatar || 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'" />
-            <div>{{ user.name }}</div>
+            <div>{{ user.displayName || user.username }}</div>
           </div>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item @click.native="goToPerson">个人信息</el-dropdown-item>
@@ -43,6 +43,10 @@
           <el-menu-item index="/orders">
             <i class="el-icon-menu"></i>
             <span slot="title">店铺订单</span>
+          </el-menu-item>
+          <el-menu-item index="/member">
+            <i class="el-icon-s-custom"></i>
+            <span slot="title">会员管理</span>
           </el-menu-item>
           <el-menu-item index="/comment">
             <i class="el-icon-menu"></i>
