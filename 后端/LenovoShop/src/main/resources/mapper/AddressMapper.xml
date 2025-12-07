@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ouc.lenovoshop.mapper.AddressMapper">
+
+    <sql id="Base_Column_List">
+        id,user_id, '' as username, detail as useraddress, phone
+    </sql>
+
+    <select id="selectAll" resultType="com.ouc.lenovoshop.entity.Address">
+        select id, user_id, '' as username, detail as useraddress, phone
+        from address
+        <where>
+            <if test="id != null"> and id= #{id}</if>
+            <if test="userId != null"> and user_id = #{userId}</if>
+            <if test="useraddress != null"> and detail = #{useraddress}</if>
+            <if test="phone != null"> and phone = #{phone}</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectById" resultType="com.ouc.lenovoshop.entity.Address">
+        select
+        <include refid="Base_Column_List" />
+        from address
+        where id = #{id}
+    </select>
+
+    <delete id="deleteById">
+        delete from address
+        where  id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.ouc.lenovoshop.entity.Address" useGeneratedKeys="true">
+        insert into address
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="useraddress != null">detail,</if>
+            <if test="phone != null">phone,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="useraddress != null">#{useraddress},</if>
+            <if test="phone != null">#{phone},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.ouc.lenovoshop.entity.Address">
+        update address
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="useraddress != null">
+                detail = #{useraddress},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

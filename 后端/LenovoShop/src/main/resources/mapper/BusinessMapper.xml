@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ouc.lenovoshop.mapper.BusinessMapper">
+
+    <sql id="Base_Column_List">
+        id, name as username, '' as password, name, phone, email, '' as avatar, '' as role, description, status
+    </sql>
+
+    <select id="selectAll" resultType="com.ouc.lenovoshop.entity.Business">
+        select
+        <include refid="Base_Column_List" />
+        from business
+        <where>
+            <if test="id != null"> and id= #{id}</if>
+            <if test="username != null"> and name like concat('%', #{username}, '%')</if>
+            <!-- business table has no password column in this schema -->
+            <if test="name != null"> and name= #{name}</if>
+            <if test="phone != null"> and phone= #{phone}</if>
+            <if test="email != null"> and email= #{email}</if>
+            <if test="avatar != null"> and avatar= #{avatar}</if>
+            <if test="role != null"> and role= #{role}</if>
+            <if test="description != null"> and description= #{description}</if>
+            <if test="status != null"> and status= #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectById" resultType="com.ouc.lenovoshop.entity.Business">
+        select
+        <include refid="Base_Column_List" />
+        from business
+        where id = #{id}
+    </select>
+
+    <delete id="deleteById">
+        delete from business
+        where  id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.ouc.lenovoshop.entity.Business" useGeneratedKeys="true">
+        insert into business
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="phone != null">phone,</if>
+            <if test="email != null">email,</if>
+            <if test="description != null">description,</if>
+            <if test="status != null">status,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="email != null">#{email},</if>
+            <if test="description != null">#{description},</if>
+            <if test="status != null">#{status},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.ouc.lenovoshop.entity.Business">
+        update business
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="email != null">
+                email = #{email},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>
