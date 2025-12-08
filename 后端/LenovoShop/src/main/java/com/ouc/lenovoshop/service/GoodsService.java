@@ -127,7 +127,6 @@ public class GoodsService {
             // 没有用户登录
             return new ArrayList<>();
         }
-        // 用户的哪些行为可以认为他跟商品产生了关系？收藏、加入购物车、下单、评论
 
         // 1. 获取所有的购物车信息
         List<Cart> allCarts = cartMapper.selectAll(null);
@@ -140,12 +139,12 @@ public class GoodsService {
         // 5. 获取所有的商品信息
         List<Goods> allGoods = goodsMapper.selectAll(null);
 
-        // 定义一个存储每个商品和每个用户关系的List
+        // 存储每个商品和每个用户关系的List
         List<RelateDTO> data = new ArrayList<>();
-        // 定义一个存储最后返回给前端的商品List
+        // 存储返回给前端的商品List
         List<Goods> result = new ArrayList<>();
 
-        // 开始计算每个商品和每个用户之间的关系数据
+        // 每个商品和用户之间的关系数据
         for (Goods goods : allGoods) {
             Integer goodsId = goods.getId();
             for (User user : allUsers) {

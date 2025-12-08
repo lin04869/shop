@@ -8,13 +8,10 @@
     justify-content: center;
     align-items: center;
     padding: 10px 0;
-    /* height: 60px;
-    line-height: 60px; */
     border-bottom: 1px solid #eee;
     background: white;
 }
 .front-header-left {
-    /* width: 350px; */
     display: flex;
     align-items: center;
     padding-left: 30px;
@@ -50,7 +47,6 @@
     text-align: center !important;
 }
 
-/*页面具体样式自定义*/
 .main-content {
     width: 100%;
     margin: 5px auto;
@@ -84,7 +80,7 @@
 }
 
 .el-button.btn-buy {
-    background-color: #3b82f6 !important; /* blue */
+    background-color: #3b82f6 !important;
     border-color: #3b82f6 !important;
     color: #fff !important;
 }
@@ -93,7 +89,7 @@
     border-color: #2563eb !important;
 }
 .el-button.btn-cart {
-    background-color: #10b981 !important; /* green */
+    background-color: #10b981 !important;
     border-color: #10b981 !important;
     color: #fff !important;
 }

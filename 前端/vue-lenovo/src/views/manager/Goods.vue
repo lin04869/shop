@@ -29,7 +29,6 @@
         
         <el-table-column prop="typeName" label="商品分类" show-overflow-tooltip>笔记本电脑</el-table-column>
         <el-table-column prop="businessName" label="所属商家" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="count" label="商品销量" show-overflow-tooltip>/</el-table-column>
         <el-table-column label="操作" width="180" align="center">
           <template v-slot="scope">
             <el-button plain type="primary" @click="handleEdit(scope.row)" size="mini">编辑</el-button>
@@ -232,18 +231,33 @@ export default {
       }).catch(() => {
       })
     },
-    load(pageNum) {  // 分页查询
+    load(pageNum) {  // 分页查询 + 搜索
       if (pageNum) this.pageNum = pageNum
-      this.$request.get('/goods/selectPage', {
-        params: {
-          pageNum: this.pageNum,
-          pageSize: this.pageSize,
-          name: this.name,
-        }
-      }).then(res => {
-        this.tableData = res.data?.list
-        this.total = res.data?.total
-      })
+      const key = (this.name || '').toString().trim()
+      if (key) {
+        // 模糊查询接口
+        this.$request.get('/goods/selectByName?name=' + encodeURIComponent(key)).then(res => {
+          if (res.code === '200') {
+            this.tableData = res.data || []
+            // 当处于搜索结果时，隐藏分页或将 total 设置为结果长度
+            this.total = this.tableData.length
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+      } else {
+        // 无关键字时，分页查询
+        this.$request.get('/goods/selectPage', {
+          params: {
+            pageNum: this.pageNum,
+            pageSize: this.pageSize,
+            name: this.name,
+          }
+        }).then(res => {
+          this.tableData = res.data?.list
+          this.total = res.data?.total
+        })
+      }
     },
     
     handleCurrentChange(pageNum) {

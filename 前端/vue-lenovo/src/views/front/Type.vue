@@ -13,7 +13,6 @@
           </el-row>
         </div>
       </div>
-      <!-- 已删除右侧商品推荐栏，应客户要求 -->
     </div>
   </div>
 </template>
