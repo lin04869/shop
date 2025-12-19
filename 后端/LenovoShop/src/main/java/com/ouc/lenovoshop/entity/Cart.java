@@ -18,7 +18,6 @@ public class Cart implements Serializable {
     private String businessName;
     private String goodsName;
     private String goodsImg;
-    private String goodUnit;
     private Double goodsPrice;
 
     public Integer getId() {
@@ -74,14 +73,6 @@ public class Cart implements Serializable {
 
     public void setGoodsImg(String goodsImg) {
         this.goodsImg = goodsImg;
-    }
-
-    public String getGoodUnit() {
-        return goodUnit;
-    }
-
-    public void setGoodUnit(String goodUnit) {
-        this.goodUnit = goodUnit;
     }
 
     public Double getGoodsPrice() {

@@ -26,7 +26,6 @@ public class Orders implements Serializable {
     private String businessName;
     private String goodsName;
     private String goodsImg;
-    private String goodsUnit;
     private Double goodsPrice;
     private String username;
     private String useraddress;
@@ -89,14 +88,6 @@ public class Orders implements Serializable {
 
     public void setGoodsImg(String goodsImg) {
         this.goodsImg = goodsImg;
-    }
-
-    public String getGoodsUnit() {
-        return goodsUnit;
-    }
-
-    public void setGoodsUnit(String goodsUnit) {
-        this.goodsUnit = goodsUnit;
     }
 
     public Double getGoodsPrice() {

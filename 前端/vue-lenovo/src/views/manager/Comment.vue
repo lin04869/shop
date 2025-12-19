@@ -8,16 +8,16 @@
     <div class="table">
       <el-table :data="tableData" stripe  @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center"></el-table-column>
-        <el-table-column prop="id" label="序号" width="80" align="center" sortable></el-table-column>
+        <el-table-column label="序号" width="80" align="center">
+          <template v-slot="scope">
+            {{ (pageNum - 1) * pageSize + scope.$index + 1 }}
+          </template>
+        </el-table-column>
         <el-table-column prop="goodsName" label="商品名称" show-overflow-tooltip></el-table-column>
         <el-table-column prop="content" label="评论内容" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="userName" label="评论用户" show-overflow-tooltip></el-table-column>
         <el-table-column prop="time" label="评论时间" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="businessName" label="商户" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="goodsName" label="商品" show-overflow-tooltip></el-table-column>
         <el-table-column label="操作" width="180" align="center">
           <template v-slot="scope">
-            <!-- 注意：评论列表不应包含发货操作，该按钮是多余的并已移除 -->
             <el-button plain type="danger" size="mini" @click=del(scope.row.id)>删除</el-button>
           </template>
         </el-table-column>

@@ -28,9 +28,7 @@
         <el-form-item label="介绍" prop="description">
           <el-input type="textarea" v-model="user.description" placeholder="店铺介绍"></el-input>
         </el-form-item>
-        <el-form-item label="审核状态" prop="status">
-          <el-input v-model="user.status" placeholder="审核状态" disabled></el-input>
-        </el-form-item>
+
         <div style="text-align: center; margin-bottom: 20px">
           <el-button type="primary" @click="update">保 存</el-button>
         </div>
@@ -48,18 +46,42 @@ export default {
     }
   },
   created() {
-
+    this.loadBusinessInfo()
   },
   methods: {
+    loadBusinessInfo() {
+      // 加载联想笔记本商家信息
+      this.$request.get('/business/selectById/1').then(res => {
+        if (res.code === '200') {
+          // 获取当前登录用户的用户名
+          let currentUser = JSON.parse(localStorage.getItem('xm-user') || '{}')
+          this.user = res.data
+          // 界面显示当前登录人的用户名，其他信息使用店铺信息
+          if (currentUser.username) {
+            this.user.username = currentUser.username
+          }
+        } else {
+          this.$message.error(res.msg)
+        }
+      })
+    },
     update() {
+      // 复制一份数据进行提交，避免修改界面显示的 username
+      let data = JSON.parse(JSON.stringify(this.user))
+      // 将 username 置空，防止更新时修改了 ID=1 账号的用户名
+      data.username = null
+      
       // 保存当前的用户信息到数据库
-      this.$request.put('/business/update', this.user).then(res => {
+      this.$request.put('/business/update', data).then(res => {
         if (res.code === '200') {
           // 成功更新
           this.$message.success('保存成功')
 
-          // 更新浏览器缓存里的用户信息
-          localStorage.setItem('xm-user', JSON.stringify(this.user))
+          // 更新浏览器缓存里的用户信息（注意：这里只更新店铺相关信息，不要覆盖当前用户的 username）
+          let currentUser = JSON.parse(localStorage.getItem('xm-user') || '{}')
+          // 将更新后的店铺信息合并进去，但保留原 username
+          let updatedUser = { ...this.user, username: currentUser.username }
+          localStorage.setItem('xm-user', JSON.stringify(updatedUser))
 
           // 触发父级的数据更新
           this.$emit('update:user')

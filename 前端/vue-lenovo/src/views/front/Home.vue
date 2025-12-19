@@ -19,13 +19,14 @@
             </div>
           </div>
 
-          <!-- 公告列表：放在轮播图下方、分类栏之前，展示最近的几条公告 -->
+          <!-- 公告列表：展示最近一条公告 -->
           <div style="margin-top: 0; padding-top: 0;">
             <div class="section-title" style="margin-bottom:6px; font-weight:600">公告</div>
             <div v-if="notice && notice.length">
-              <el-card v-for="(n, idx) in notice.slice(0,3)" :key="n.id" shadow="never" style="margin-bottom:6px" :body-style="{ padding: '12px' }">
+              <el-card v-for="(n, idx) in notice.slice(0,1)" :key="n.id" shadow="never" style="margin-bottom:6px" :body-style="{ padding: '12px' }">
                 <div style="display:flex; flex-direction:column">
-                  <div style="font-weight:600; font-size:18px">{{ n.title || n.content }}</div>
+                  <div style="font-weight:600; font-size:18px; margin-bottom: 5px">{{ n.title }}</div>
+                  <div style="color: #666; font-size: 14px; margin-bottom: 5px">{{ n.content }}</div>
                   <div style="color:#888; font-size:12px; margin-top:4px">发布者：{{ n.user }} &nbsp;·&nbsp; {{ n.time }}</div>
                 </div>
               </el-card>
@@ -46,7 +47,7 @@
 
           <!-- 随机推荐：在分类下方显示 -->
           <div style="margin-top:20px">
-            <div class="section-title" style="margin-top:0">随机推荐</div>
+            <div class="section-title" style="margin-top:0">为你推荐</div>
             <div style="margin: 10px 5px 40px 5px">
               <el-row>
                 <el-col :span="5" v-for="(item, index) in shuffledGoods" :key="index">
@@ -57,7 +58,10 @@
                     class="goods-img"
                   />
                   <div class="goods-name">{{ item.name }}</div>
-                  <div class="goods-price">￥ {{ item.price }}</div>
+                  <div class="goods-price">
+                    <span v-if="item.originalPrice && item.originalPrice > item.price" style="text-decoration: line-through; color: #999; font-size: 12px; margin-right: 5px">￥{{ item.originalPrice }}</span>
+                    <span>￥ {{ item.price }}</span>
+                  </div>
                 </el-col>
               </el-row>
             </div>
@@ -76,10 +80,8 @@ export default {
     return {
       user: JSON.parse(localStorage.getItem('xm-user') || '{}'),
       typeData: [],
-      top: null,
       notice: [],
       goodsData: [],
-      recommendData: [],
       carousel_top: [
         require('@/assets/imgs/Carousel1.jpg'),
         require('@/assets/imgs/Carousel2.jpg'),
@@ -107,15 +109,6 @@ export default {
   },
 
   methods: {
-    loadRecommend() {
-      this.$request.get('/goods/recommend').then((res) => {
-        if (res.code === '200') {
-          this.recommendData = res.data;
-        } else {
-          this.$message.error(res.msg);
-        }
-      });
-    },
     loadType() {
       this.$request.get('/type/selectAll').then((res) => {
         if (res.code === '200') {
@@ -128,21 +121,10 @@ export default {
     loadNotice() {
       this.$request.get('/notice/selectAll').then((res) => {
         this.notice = res.data;
-        let i = 0;
-        if (this.notice && this.notice.length) {
-          this.top = this.notice[0].content;
-          setInterval(() => {
-            this.top = this.notice[i].content;
-            i++;
-            if (i === this.notice.length) {
-              i = 0;
-            }
-          }, 2500);
-        }
       });
     },
     loadGoods() {
-      this.$request.get('/goods/selectTop15').then((res) => {
+      this.$request.get('/goods/selectAll').then((res) => {
         if (res.code === '200') {
           this.goodsData = res.data;
         } else {
@@ -158,12 +140,19 @@ export default {
   computed: {
     shuffledGoods() {
       if (!this.goodsData || !this.goodsData.length) return [];
-      const arr = this.goodsData.slice();
-      for (let i = arr.length - 1; i > 0; i--) {
+      // 筛选有折扣的商品
+      const discounted = this.goodsData.filter(item => item.originalPrice && item.originalPrice > item.price);
+      // 筛选没有折扣的商品
+      const others = this.goodsData.filter(item => !item.originalPrice || item.originalPrice <= item.price);
+      // 对没有折扣的商品进行随机打乱
+      for (let i = others.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+        [others[i], others[j]] = [others[j], others[i]];
       }
-      return arr.slice(0, 15);
+      // 合并：优先展示折扣商品，剩下的用随机商品填充
+      const result = [...discounted, ...others];
+      // 取前15个
+      return result.slice(0, 15);
     }
     ,
     orderedTypeData() {

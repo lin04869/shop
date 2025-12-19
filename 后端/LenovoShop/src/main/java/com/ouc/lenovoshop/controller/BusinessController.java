@@ -20,33 +20,6 @@ public class BusinessController {
     private BusinessService businessService;
 
     /**
-     * 新增
-     */
-    @PostMapping("/add")
-    public Result add(@RequestBody Business business) {
-        businessService.add(business);
-        return Result.success();
-    }
-
-    /**
-     * 删除
-     */
-    @DeleteMapping("/delete/{id}")
-    public Result deleteById(@PathVariable Integer id) {
-        businessService.deleteById(id);
-        return Result.success();
-    }
-
-    /**
-     * 批量删除
-     */
-    @DeleteMapping("/delete/batch")
-    public Result deleteBatch(@RequestBody List<Integer> ids) {
-        businessService.deleteBatch(ids);
-        return Result.success();
-    }
-
-    /**
      * 修改
      */
     @PutMapping("/update")
@@ -71,17 +44,6 @@ public class BusinessController {
     public Result selectAll(Business business ) {
         List<Business> list = businessService.selectAll(business);
         return Result.success(list);
-    }
-
-    /**
-     * 分页查询
-     */
-    @GetMapping("/selectPage")
-    public Result selectPage(Business business,
-                             @RequestParam(defaultValue = "1") Integer pageNum,
-                             @RequestParam(defaultValue = "10") Integer pageSize) {
-        PageInfo<Business> page = businessService.selectPage(business, pageNum, pageSize);
-        return Result.success(page);
     }
 
 }

@@ -9,7 +9,7 @@
     </sql>
 
     <select id="selectAll" resultType="com.ouc.lenovoshop.entity.Cart">
-        select cart.*, business.name as businessName, goods.img as goodsImg, goods.name as goodsName, goods.price as goodsPrice, '' as goodUnit
+        select cart.*, business.name as businessName, goods.img as goodsImg, goods.name as goodsName, goods.price as goodsPrice
         from cart
         left join business on cart.business_id = business.id
         left join goods on cart.goods_id = goods.id

@@ -26,7 +26,6 @@ public class Business extends Account implements Serializable {
     private String role;
 
     private String description;
-    private String status;
 
     @Override
     public Integer getId() {
@@ -58,12 +57,10 @@ public class Business extends Account implements Serializable {
         this.password = password;
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -110,13 +107,5 @@ public class Business extends Account implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 }

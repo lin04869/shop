@@ -19,13 +19,6 @@
           <el-input placeholder="确认密码" show-password v-model="form.confirm"></el-input>
         </el-form-item>
 
-        <el-form-item prop="role">
-          <el-select v-model="form.role" placeholder="选择身份">
-            <el-option label="普通用户" value="USER"></el-option>
-            <el-option label="商家管理员" value="BUSINESS"></el-option>
-          </el-select>
-        </el-form-item>
-
         <el-form-item>
           <el-button type="primary" native-type="button" class="full-btn" @click="onRegister" :loading="loading">注 册</el-button>
         </el-form-item>
@@ -44,7 +37,7 @@ export default {
   data() {
     return {
       loading: false,
-      form: { username: '', password: '', confirm: '', role: '' },
+      form: { username: '', password: '', confirm: '', role: 'USER' },
       rules: {
         username: [{ required: true, message: '请填写用户名', trigger: 'blur' }],
         password: [{ required: true, message: '请填写密码', trigger: 'blur' }],

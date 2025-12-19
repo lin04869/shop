@@ -5,27 +5,27 @@
 <mapper namespace="com.ouc.lenovoshop.mapper.NoticeMapper">
 
     <sql id="Base_Column_List">
-        id,title,content,time,admin_id
+        id,title,content,time,business_id
     </sql>
 
     <select id="selectAll" resultType="com.ouc.lenovoshop.entity.Notice">
-        select n.id, n.title, n.content, n.time, a.name as user, n.admin_id
+        select n.id, n.title, n.content, n.time, b.name as user, n.business_id
         from notice n
-        left join admin a on n.admin_id = a.id
+        left join business b on n.business_id = b.id
         <where>
             <if test="id != null"> and n.id= #{id}</if>
             <if test="title != null"> and n.title like concat('%', #{title}, '%')</if>
             <if test="content != null"> and n.content= #{content}</if>
             <if test="time != null"> and n.time= #{time}</if>
-            <if test="adminId != null"> and n.admin_id= #{adminId}</if>
+            <if test="businessId != null"> and n.business_id= #{businessId}</if>
         </where>
         order by n.id desc
     </select>
 
     <select id="selectById" resultType="com.ouc.lenovoshop.entity.Notice">
-        select n.id, n.title, n.content, n.time, a.name as user, n.admin_id
+        select n.id, n.title, n.content, n.time, b.name as user, n.business_id
         from notice n
-        left join admin a on n.admin_id = a.id
+        left join business b on n.business_id = b.id
         where n.id = #{id}
     </select>
 
@@ -41,14 +41,14 @@
             <if test="title != null">title,</if>
             <if test="content != null">content,</if>
             <if test="time != null">time,</if>
-            <if test="adminId != null">admin_id,</if>
+            <if test="businessId != null">business_id,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
             <if test="title != null">#{title},</if>
             <if test="content != null">#{content},</if>
             <if test="time != null">#{time},</if>
-            <if test="adminId != null">#{adminId},</if>
+            <if test="businessId != null">#{businessId},</if>
         </trim>
         </insert>
 
@@ -64,8 +64,8 @@
             <if test="time != null">
                 time = #{time},
             </if>
-            <if test="adminId != null">
-                admin_id = #{adminId},
+            <if test="businessId != null">
+                business_id = #{businessId},
             </if>
         </set>
         where id = #{id} 

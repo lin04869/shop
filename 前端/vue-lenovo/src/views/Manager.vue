@@ -83,9 +83,6 @@ export default {
       this.user = JSON.parse(localStorage.getItem('xm-user') || '{}')   // 重新获取下用户的最新信息
     },
     goToPerson() {
-      if (this.user.role === 'ADMIN') {
-        this.$router.push('/adminPerson')
-      }
       if (this.user.role === 'BUSINESS') {
         this.$router.push('/businessPerson')
       }

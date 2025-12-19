@@ -28,11 +28,11 @@ public class NoticeService {
         notice.setTime(DateUtil.now());
         Account currentUser = TokenUtils.getCurrentUser();
         notice.setUser(currentUser.getUsername());
-        // 将 adminId 设为管理员 id；若当前用户不是管理员，则回退到 admin id=1（兼容单店场景）
-        if ("ADMIN".equals(currentUser.getRole())) {
-            notice.setAdminId(currentUser.getId());
+        // 将 businessId 设为商家 id；若当前用户不是商家，则回退到 business id=1
+        if ("BUSINESS".equals(currentUser.getRole())) {
+            notice.setBusinessId(currentUser.getId());
         } else {
-            notice.setAdminId(1);
+            notice.setBusinessId(1);
         }
         noticeMapper.insert(notice);
     }
@@ -57,9 +57,9 @@ public class NoticeService {
      * 修改
      */
     public void updateById(Notice notice) {
-        // 如果没有 adminId，设定为 adminId=1 以通过 NOT NULL 约束（兼容商家编辑公告）
-        if (notice.getAdminId() == null) {
-            notice.setAdminId(1);
+        // 如果没有 businessId，设定为 businessId=1 以通过 NOT NULL 约束
+        if (notice.getBusinessId() == null) {
+            notice.setBusinessId(1);
         }
         noticeMapper.updateById(notice);
     }

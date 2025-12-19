@@ -34,10 +34,13 @@
               </div>
             </div>
 
-            <div class="price">价格：<span class="price-value">{{ goodsData.price }}</span></div>
+            <div class="price">
+              价格：
+              <span class="price-value">￥{{ goodsData.price }}</span>
+              <span v-if="goodsData.originalPrice && goodsData.originalPrice > goodsData.price" style="text-decoration: line-through; color: #999; font-size: 14px; margin-left: 10px">原价：￥{{ goodsData.originalPrice }}</span>
+            </div>
 
             <div class="actions">
-              <!-- 立即购买替代原收藏按钮 -->
               <el-input-number v-model="quantity" :min="1" :max="99" style="margin-right:10px"></el-input-number>
               <el-button class="btn-buy" type="primary" @click="openBuyDialog">立即购买</el-button>
               <el-button class="btn-cart" type="danger" @click="addCart">加入购物车</el-button>
@@ -85,7 +88,7 @@
           </el-col>
         </el-row>
 
-        <!-- 评论行（占满整行，删除空列） -->
+        <!-- 评论行-->
         <el-row class="comment-row" :gutter="20">
           <el-col :span="24">
             <el-tabs v-model="activeName" @tab-click="handleClick">

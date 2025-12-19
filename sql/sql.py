@@ -64,7 +64,7 @@ def import_excel(path=EXCEL_PATH, dry=False):
             price = row.get("价格", row.get("price", 0))
             price = float(price) if pd.notna(price) else 0.0
 
-            original_price = price * 1.1  # 简单估算原价
+            original_price = price  # 原价默认等于售价
 
             # 是否存在
             cur.execute("SELECT id FROM goods WHERE name=%s AND business_id=1", (name,))

@@ -26,9 +26,9 @@
         <el-table-column prop="name" label="商品名称" show-overflow-tooltip></el-table-column>
         
         <el-table-column prop="price" label="商品价格" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="originalPrice" label="商品原价" show-overflow-tooltip></el-table-column>
         
-        <el-table-column prop="typeName" label="商品分类" show-overflow-tooltip>笔记本电脑</el-table-column>
-        <el-table-column prop="businessName" label="所属商家" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="typeName" label="商品分类" show-overflow-tooltip></el-table-column>
         <el-table-column label="操作" width="180" align="center">
           <template v-slot="scope">
             <el-button plain type="primary" @click="handleEdit(scope.row)" size="mini">编辑</el-button>
@@ -67,19 +67,12 @@
         <el-form-item prop="name" label="商品名称">
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item prop="name" label="商品价格">
+        <el-form-item prop="price" label="商品价格">
           <el-input v-model="form.price" autocomplete="off"></el-input>
         </el-form-item>
-<!--
-        <el-form-item prop="typeId" label="商品分类">
-          <el-select v-model="form.typeId" placeholder="请选择分类" style="width: 100%">
-            <el-option v-for="item in typeData" :label="item.name" :value="item.id" :key="item.id"></el-option>
-          </el-select>
+        <el-form-item prop="originalPrice" label="商品原价">
+          <el-input v-model="form.originalPrice" autocomplete="off" placeholder="设置原价高于现价即为促销商品"></el-input>
         </el-form-item>
-        <el-form-item prop="unit" label="计件单位">
-          <el-input v-model="form.unit" autocomplete="off"></el-input>
-        </el-form-item>
-      -->
         <el-form-item prop="description" label="商品介绍">
           <div id="editor" style="width: 100%"></div>
         </el-form-item>
@@ -128,11 +121,11 @@ export default {
       form: {},
       user: JSON.parse(localStorage.getItem('xm-user') || '{}'),
       rules: {
-        title: [
-          {required: true, name: '请输入商品名称', trigger: 'blur'},
+        name: [
+          {required: true, message: '请输入商品名称', trigger: 'blur'},
         ],
-        content: [
-          {required: true, img: '请输上传商品图主图', trigger: 'blur'},
+        price: [
+          {required: true, message: '请输入商品价格', trigger: 'blur'},
         ]
       },
       ids: [],
@@ -155,11 +148,6 @@ export default {
       })
     },
     handleAdd() {   // 新增数据
-      if ('审核通过' !== this.user.status) {
-        this.user.status = '审核通过'
-        //this.$message.warning('您的店铺信息还未审核通过，暂时不允许发布商品')
-        //return
-      }
       this.form = {}  // 新增数据的时候清空数据
       initWangEditor('')
       this.fromVisible = true   // 打开弹窗

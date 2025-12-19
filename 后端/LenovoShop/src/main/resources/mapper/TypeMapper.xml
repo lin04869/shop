@@ -49,7 +49,7 @@
         </trim>
     </insert>
 
-    <update id="updateById" parameterType="com.ouc.lenovoshop.entity.Admin">
+    <update id="updateById" parameterType="com.ouc.lenovoshop.entity.Type">
         update type
         <set>
             <if test="name != null">

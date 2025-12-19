@@ -1,6 +1,7 @@
 package com.ouc.lenovoshop.service;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.ouc.lenovoshop.common.enums.RoleEnum;
 import com.ouc.lenovoshop.entity.Account;
 import com.ouc.lenovoshop.entity.Cart;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.management.relation.Role;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -127,15 +129,21 @@ public class OrdersService {
      */
     public PageInfo<Orders> selectPage(Orders orders, Integer pageNum, Integer pageSize) {
         Account currentUser = TokenUtils.getCurrentUser();
+        // 安全检查：如果未获取到有效用户，直接返回空列表，防止数据泄露
+        if (ObjectUtil.isNull(currentUser) || ObjectUtil.isNull(currentUser.getId())) {
+            return new PageInfo<>(new ArrayList<>());
+        }
         if (orders == null) {
             orders = new Orders();
         }
+        // 权限控制：普通用户只能查自己的订单
         if (RoleEnum.USER.name().equals(currentUser.getRole())) {
             orders.setUserId(currentUser.getId());
+        } else if (!RoleEnum.BUSINESS.name().equals(currentUser.getRole())) {
+            // 如果既不是用户也不是商家（异常情况），返回空
+            return new PageInfo<>(new ArrayList<>());
         }
-        if (RoleEnum.BUSINESS.name().equals(currentUser.getRole())) {
-            orders.setBusinessId(currentUser.getId());
-        }
+
         // 如果前端传入中文状态文本，则转换为 number 字符串来查询
         if (orders.getStatus() != null && !orders.getStatus().matches("\\d+")) {
             orders.setStatus(mapStatusToNumber(orders.getStatus()));

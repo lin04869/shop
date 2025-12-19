@@ -9,7 +9,7 @@
     </sql>
 
     <select id="selectAll" resultType="com.ouc.lenovoshop.entity.Comment">
-        select comment.*, business.name as businessName, goods.img as goodsImg, goods.name as goodsName, goods.price as goodsPrice, '' as goodUnit,
+        select comment.*, business.name as businessName, goods.img as goodsImg, goods.name as goodsName, goods.price as goodsPrice,
                user.username as userName
         from comment
         left join business on comment.business_id = business.id

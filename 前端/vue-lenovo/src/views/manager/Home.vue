@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="card" style="padding: 15px">
-      您好，{{ user?.name }}！欢迎使用联想后台管理系统！
+      您好，{{ user?.username }}！欢迎使用联想后台管理系统！
     </div>
 
     <div style="display: flex; margin: 10px 0">

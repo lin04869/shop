@@ -10,7 +10,6 @@ import com.ouc.lenovoshop.common.enums.ResultCodeEnum;
 import com.ouc.lenovoshop.common.enums.RoleEnum;
 import com.ouc.lenovoshop.entity.Account;
 import com.ouc.lenovoshop.exception.CustomException;
-import com.ouc.lenovoshop.service.AdminService;
 import com.ouc.lenovoshop.service.BusinessService;
 import com.ouc.lenovoshop.service.UserService;
 import org.slf4j.Logger;
@@ -30,8 +29,6 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     private static final Logger log = LoggerFactory.getLogger(JwtInterceptor.class);
 
-    @Resource
-    private AdminService adminService;
     @Resource
     private BusinessService businessService;
     @Resource
@@ -72,21 +69,39 @@ public class JwtInterceptor implements HandlerInterceptor {
                 throw new CustomException(ResultCodeEnum.TOKEN_CHECK_ERROR);
             }
             // 根据 operatorId 用于校验签名（operator为实际的登录账号）
-            if (RoleEnum.ADMIN.name().equals(role)) {
-                account = adminService.selectById(Integer.valueOf(operatorId));
-            }
             if (RoleEnum.BUSINESS.name().equals(role)) {
-                // 1. 获取用于验证的 operator（登录账号）
-                com.ouc.lenovoshop.entity.Account operator = userService.selectById(Integer.valueOf(operatorId));
-                // 如果 operator 不存在，尝试以 operatorId 为商家 id 回退（兼容性）
-                if (ObjectUtil.isNull(operator)) {
-                    // fallback: operator may be a business account
-                    operator = businessService.selectById(Integer.valueOf(operatorId));
-                }
                 account = businessService.selectById(Integer.valueOf(subjectId));
-                // 将 operator 的密码临时放入 account 中，方便下面统一校验（如果 operator 存在且其密码不为空）
-                if (ObjectUtil.isNotNull(operator) && ObjectUtil.isNotEmpty(operator.getPassword())) {
-                    account.setPassword(operator.getPassword());
+                if (ObjectUtil.isNull(account)) {
+                    throw new CustomException(ResultCodeEnum.USER_NOT_EXIST_ERROR);
+                }
+                boolean verified = false;
+                // 1. 优先尝试验证 User (兼容旧逻辑或 ID 冲突时的 User)
+                Account userOperator = userService.selectById(Integer.valueOf(operatorId));
+                if (ObjectUtil.isNotNull(userOperator)) {
+                    try {
+                        JWT.require(Algorithm.HMAC256(userOperator.getPassword())).build().verify(token);
+                        account.setPassword(userOperator.getPassword());
+                        verified = true;
+                    } catch (Exception e) {
+                        // 验证失败，可能是 ID 冲突，继续尝试 Business
+                    }
+                }
+                // 2. 如果 User 验证失败，尝试验证 Business (Admin 场景)
+                if (!verified) {
+                    Account businessOperator = businessService.selectById(Integer.valueOf(operatorId));
+                    if (ObjectUtil.isNotNull(businessOperator)) {
+                        try {
+                            JWT.require(Algorithm.HMAC256(businessOperator.getPassword())).build().verify(token);
+                            account.setPassword(businessOperator.getPassword());
+                            verified = true;
+                        } catch (Exception e) {
+                            // 验证失败
+                        }
+                    }
+                }
+                // 如果都未验证通过，抛出异常
+                if (!verified) {
+                    throw new CustomException(ResultCodeEnum.TOKEN_CHECK_ERROR);
                 }
             }
             if (RoleEnum.USER.name().equals(role)) {

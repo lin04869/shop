@@ -18,8 +18,8 @@ public class Notice implements Serializable {
     private String time;
     /** 创建人 */
     private String user;
-    /** 创建人ID（对应 admin.id） */
-    private Integer adminId;
+    /** 创建人ID（对应 business.id） */
+    private Integer businessId;
 
     public Integer getId() {
         return id;
@@ -61,12 +61,12 @@ public class Notice implements Serializable {
         this.user = user;
     }
 
-    public Integer getAdminId() {
-        return adminId;
+    public Integer getBusinessId() {
+        return businessId;
     }
 
-    public void setAdminId(Integer adminId) {
-        this.adminId = adminId;
+    public void setBusinessId(Integer businessId) {
+        this.businessId = businessId;
     }
 
 }

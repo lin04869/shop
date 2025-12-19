@@ -30,7 +30,10 @@
             <el-col :span="5" style="margin-bottom: 20px" v-for="(item,index) in goodsData" :key="index">
               <img :src="item.img" alt="" style="width: 100%; height: 150px; border-radius: 10px; border: #cccccc 1px solid" @click="navTo('/front/detail?id=' + item.id)">
               <div style="margin-top: 10px; font-weight: 500; font-size: 16px; width: 160px; color: #000000FF; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{item.name}}</div>
-              <div style="margin-top: 5px; font-size: 20px; color: #FF5000FF">￥ {{ item.price }}<span v-if="item.unit"> {{ item.unit }}</span></div>
+              <div style="margin-top: 5px; font-size: 20px; color: #FF5000FF">
+                <span v-if="item.originalPrice && item.originalPrice > item.price" style="text-decoration: line-through; color: #999; font-size: 14px; margin-right: 5px">￥{{ item.originalPrice }}</span>
+                ￥ {{ item.price }}
+              </div>
             </el-col>
           </el-row>
         </div>

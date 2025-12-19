@@ -83,10 +83,6 @@ public class CommentService {
         if (RoleEnum.USER.name().equals(currentUser.getRole())) {
             comment.setUserId(currentUser.getId());
         }
-        if (RoleEnum.BUSINESS.name().equals(currentUser.getRole())) {
-            comment.setBusinessId(currentUser.getId());
-        }
-        // 兼容单店场景：若没有商家角色但未指定 businessId，则回退到第一个商家
         if (!RoleEnum.BUSINESS.name().equals(currentUser.getRole()) && comment.getBusinessId() == null) {
             try {
                 java.util.List<com.ouc.lenovoshop.entity.Business> shops = businessService.selectAll(new com.ouc.lenovoshop.entity.Business());

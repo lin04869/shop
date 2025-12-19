@@ -6,7 +6,6 @@ import com.ouc.lenovoshop.common.Result;
 import com.ouc.lenovoshop.common.enums.ResultCodeEnum;
 import com.ouc.lenovoshop.common.enums.RoleEnum;
 import com.ouc.lenovoshop.entity.Account;
-import com.ouc.lenovoshop.service.AdminService;
 import com.ouc.lenovoshop.service.BusinessService;
 import com.ouc.lenovoshop.service.UserService;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +18,6 @@ import javax.annotation.Resource;
 @RestController
 public class WebController {
 
-    @Resource
-    private AdminService adminService;
     @Resource
     private BusinessService businessService;
     @Resource
@@ -40,9 +37,6 @@ public class WebController {
                 || ObjectUtil.isEmpty(account.getRole())) {
             return Result.error(ResultCodeEnum.PARAM_LOST_ERROR);
         }
-        if (RoleEnum.ADMIN.name().equals(account.getRole())) {
-            account = adminService.login(account);
-        }
         if (RoleEnum.BUSINESS.name().equals(account.getRole())) {
             account = businessService.login(account);
         }
@@ -61,12 +55,6 @@ public class WebController {
                 || ObjectUtil.isEmpty(account.getRole())) {
             return Result.error(ResultCodeEnum.PARAM_LOST_ERROR);
         }
-        if (RoleEnum.ADMIN.name().equals(account.getRole())) {
-            adminService.register(account);
-        }
-        if (RoleEnum.BUSINESS.name().equals(account.getRole())) {
-            businessService.register(account);
-        }
         if (RoleEnum.USER.name().equals(account.getRole())) {
             userService.register(account);
         }
@@ -81,9 +69,6 @@ public class WebController {
         if (StrUtil.isBlank(account.getUsername()) || StrUtil.isBlank(account.getPassword())
                 || ObjectUtil.isEmpty(account.getNewPassword())) {
             return Result.error(ResultCodeEnum.PARAM_LOST_ERROR);
-        }
-        if (RoleEnum.ADMIN.name().equals(account.getRole())) {
-            adminService.updatePassword(account);
         }
         if (RoleEnum.BUSINESS.name().equals(account.getRole())) {
             businessService.updatePassword(account);

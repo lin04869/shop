@@ -35,9 +35,6 @@ public interface GoodsMapper {
      */
     List<Goods> selectAll(Goods goods);
 
-    @Select("select g.*, '' as unit, 0 as count, t.name as typeName, b.name as businessName from goods g left join type t on g.type_id = t.id left join business b on g.business_id = b.id order by g.id desc limit 15")
-    List<Goods> selectTop15();
-
     @Select("select * from goods where type_id = #{id}")
     List<Goods> selectByTypeId(Integer id);
 

@@ -28,7 +28,6 @@
             goods.img as goodsImg,
             goods.name as goodsName,
             goods.price as goodsPrice,
-            '' as goodsUnit,
             user.username as username,
             address.detail as useraddress,
             address.phone as phone

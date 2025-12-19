@@ -17,8 +17,8 @@ public class Goods implements Serializable {
     /** 商品主图 */
     private String img;
     private Double price;
-    private String unit;
-    private Integer count;
+    /** 原价 */
+    private Double originalPrice;
     private Integer typeId;
     private Integer businessId;
 
@@ -65,20 +65,12 @@ public class Goods implements Serializable {
         this.price = price;
     }
 
-    public String getUnit() {
-        return unit;
+    public Double getOriginalPrice() {
+        return originalPrice;
     }
 
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
-
-    public Integer getCount() {
-        return count;
-    }
-
-    public void setCount(Integer count) {
-        this.count = count;
+    public void setOriginalPrice(Double originalPrice) {
+        this.originalPrice = originalPrice;
     }
 
     public Integer getTypeId() {

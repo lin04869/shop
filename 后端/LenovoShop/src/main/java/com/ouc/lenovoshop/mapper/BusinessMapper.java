@@ -13,6 +13,6 @@ public interface BusinessMapper {
     Business selectById(Integer id);
     List<Business> selectAll(Business business);
 
-    @Select("select id, name as username, '' as password, name, phone, email, '' as avatar, '' as role, description, status from business where name = #{username}")
+    @Select("select * from business where username = #{username}")
     Business selectByUsername(String username);
 }

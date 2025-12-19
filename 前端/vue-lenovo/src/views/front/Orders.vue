@@ -27,7 +27,7 @@
               </el-table-column>
               <el-table-column prop="goodsPrice" label="商品价格">
                 <template v-slot="scope">
-                  {{scope.row.goodsPrice}} / {{scope.row.goodsUnit}}
+                  {{scope.row.goodsPrice}}
                 </template>
               </el-table-column>
               <el-table-column prop="num" label="商品数量"></el-table-column>

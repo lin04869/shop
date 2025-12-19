@@ -7,7 +7,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.ouc.lenovoshop.common.Constants;
 import com.ouc.lenovoshop.common.enums.RoleEnum;
 import com.ouc.lenovoshop.entity.Account;
-import com.ouc.lenovoshop.service.AdminService;
 import com.ouc.lenovoshop.service.BusinessService;
 import com.ouc.lenovoshop.service.UserService;
 import com.ouc.lenovoshop.entity.Business;
@@ -31,18 +30,14 @@ public class TokenUtils {
 
     private static final Logger log = LoggerFactory.getLogger(TokenUtils.class);
 
-    private static AdminService staticAdminService;
     private static BusinessService staticBusinessService;
     private static UserService staticUserService;
-    @Resource
-    AdminService adminService;
     @Resource
     BusinessService businessService;
     @Resource
     UserService userService;
     @PostConstruct
     public void setUserService() {
-        staticAdminService = adminService;
         staticBusinessService = businessService;
         staticUserService = userService;
     }
@@ -79,15 +74,20 @@ public class TokenUtils {
                     } else {
                         return new Account();
                     }
-                    if (RoleEnum.ADMIN.name().equals(role)) {
-                        return staticAdminService.selectById(Integer.valueOf(operatorId));
-                    }
                     if (RoleEnum.BUSINESS.name().equals(role)) {
                         // 返回 subjectId 所表示的 shop 作为当前用户（方便业务层查询商家数据）
-                        return staticBusinessService.selectById(Integer.valueOf(subjectId));
+                        Account business = staticBusinessService.selectById(Integer.valueOf(subjectId));
+                        if (business != null) {
+                            business.setRole(RoleEnum.BUSINESS.name());
+                        }
+                        return business;
                     }
                     if (RoleEnum.USER.name().equals(role)) {
-                        return staticUserService.selectById(Integer.valueOf(operatorId));
+                        Account user = staticUserService.selectById(Integer.valueOf(operatorId));
+                        if (user != null) {
+                            user.setRole(RoleEnum.USER.name());
+                        }
+                        return user;
                     }
             }
         } catch (Exception e) {

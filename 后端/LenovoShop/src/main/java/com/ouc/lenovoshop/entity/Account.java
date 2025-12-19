@@ -7,8 +7,6 @@ public class Account {
     private Integer id;
     /** 用户名 */
     private String username;
-    /** 显示名称（用于展示：商家店铺名或管理员昵称），兼容替代旧的 nickname */
-    private String displayName;
     /** 密码 */
     private String password;
     /** 角色标识 */
@@ -34,31 +32,6 @@ public class Account {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    /**
-     * 兼容：返回用户名（原先用于昵称/显示名）
-     * @return username
-     */
-    @Deprecated
-    public String getName() {
-        return this.displayName != null && !this.displayName.isEmpty() ? this.displayName : this.username;
-    }
-
-    /**
-     * 兼容：设置用户名（原先用于昵称/显示名）
-     */
-    @Deprecated
-    public void setName(String name) {
-        this.displayName = name;
-    }
-
-    public String getDisplayName() {
-        return this.displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
     }
 
     public String getPassword() {

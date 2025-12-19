@@ -2,7 +2,7 @@
   <div>
     <manager-header>
       <template v-slot:search>
-        <el-input placeholder="请输入账号查询" style="width: 200px" v-model="username"></el-input>
+        <el-input placeholder="请输入用户名查询" style="width: 200px" v-model="username"></el-input>
         <el-button type="info" plain style="margin-left: 10px" @click="load(1)">查询</el-button>
       </template>
       <template v-slot:operation>
@@ -15,7 +15,6 @@
       <el-table :data="tableData" strip @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center"></el-table-column>
         <el-table-column prop="id" label="序号" width="70" align="center" sortable></el-table-column>
-        <el-table-column prop="username" label="账号"></el-table-column>
         <el-table-column prop="username" label="用户名"></el-table-column>
         <el-table-column prop="phone" label="电话"></el-table-column>
         <el-table-column prop="email" label="邮箱"></el-table-column>

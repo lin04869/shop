@@ -27,40 +27,27 @@ INSERT INTO `type` (`id`, `name`, `description`, `img`, `sort`) VALUES
 (4, 'YOGA系列',  'YOGA 系列轻薄本','https://p2.lefile.cn/product/adminweb/2024/04/18/0E2gNU6mizqEL2PaGbDKcGEsC-2633.jpg', 4),
 (5, '其他系列',  '其他相关产品','https://p2.lefile.cn/product/adminweb/2025/08/19/TQmQujsA98JHhDdGjoC8q2yqW-0834.jpg', 5);
 
--- 2. 管理员表
-DROP TABLE IF EXISTS `admin`;
-CREATE TABLE `admin` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '管理员ID',
-  `username` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '用户名',
-  `password` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '密码',
-  `name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '姓名',
-  `avatar` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '头像',
-  `phone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '电话',
-  `email` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '邮箱',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='管理员表';
 
-INSERT INTO `admin` (`id`, `username`, `password`, `name`, `avatar`, `phone`, `email`) VALUES
-(1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', '联想商城管理员', '', '400-990-8888', 'admin@lenovo.com');
-
--- 3. 商家表
+-- 2. 商家表
 DROP TABLE IF EXISTS `business`;
 CREATE TABLE `business` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '商家ID',
+  `username` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '用户名',
+  `password` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '密码',
   `name` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '店铺名称',
   `phone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '联系电话',
   `email` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '邮箱',
+  `avatar` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '头像',
+  `role` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT 'BUSINESS' COMMENT '角色',
   `description` TEXT COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '店铺介绍',
-  `status` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '商家状态',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='商家表';
 
--- old insert removed; now insert updated to include description/status
-INSERT INTO `business` (`id`, `name`, `phone`, `email`, `description`, `status`) VALUES
-(1, '联想官方旗舰店', '888-888-8888', 'shop@lenovo.com', '联想笔记本电脑商城', '');
+INSERT INTO `business` (`id`, `username`, `password`, `name`, `phone`, `email`, `description`) VALUES
+(1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', '联想官方旗舰店', '888-888-8888', 'shop@lenovo.com', '联想笔记本电脑商城');
 
--- 4. 用户表
+-- 3. 用户表
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
@@ -75,11 +62,12 @@ CREATE TABLE `user` (
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户表';
 
--- 5. 地址表
+-- 4. 地址表
 DROP TABLE IF EXISTS `address`;
 CREATE TABLE `address` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '地址ID',
   `user_id` int(11) NOT NULL COMMENT '用户ID',
+  `username` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '收货人姓名',
   `phone` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '联系电话',
   `detail` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '详细地址',
   `business_id` int(11) DEFAULT 1 COMMENT '店铺ID(固定为1)',
@@ -93,7 +81,7 @@ ALTER TABLE `address`
   ADD CONSTRAINT `address_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `address_ibfk_2` FOREIGN KEY (`business_id`) REFERENCES `business` (`id`);
 
--- 6. 商品表
+-- 5. 商品表
 DROP TABLE IF EXISTS `goods`;
 CREATE TABLE `goods` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '商品ID',
@@ -111,7 +99,7 @@ CREATE TABLE `goods` (
   CONSTRAINT `goods_ibfk_2` FOREIGN KEY (`business_id`) REFERENCES `business` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='商品表';
 
--- 7. 购物车表
+-- 6. 购物车表
 DROP TABLE IF EXISTS `cart`;
 CREATE TABLE `cart` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '购物车ID',
@@ -132,7 +120,7 @@ ALTER TABLE `cart`
   ADD CONSTRAINT `cart_ibfk_3` FOREIGN KEY (`business_id`) REFERENCES `business` (`id`);
 
 
--- 8. 订单表
+-- 7. 订单表
 DROP TABLE IF EXISTS `orders`;
 CREATE TABLE `orders` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '订单ID',
@@ -159,7 +147,7 @@ ALTER TABLE `orders`
   ADD CONSTRAINT `orders_ibfk_3` FOREIGN KEY (`goods_id`) REFERENCES `goods` (`id`),
   ADD CONSTRAINT `orders_ibfk_4` FOREIGN KEY (`business_id`) REFERENCES `business` (`id`);
 
--- 9. 订单详情表
+-- 8. 订单详情表
 DROP TABLE IF EXISTS `order_item`;
 CREATE TABLE `order_item` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '详情ID',
@@ -177,7 +165,7 @@ ALTER TABLE `order_item`
   ADD CONSTRAINT `order_item_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `order_item_ibfk_2` FOREIGN KEY (`goods_id`) REFERENCES `goods` (`id`) ON DELETE CASCADE;
 
--- 10. 评论表
+-- 9. 评论表
 DROP TABLE IF EXISTS `comment`;
 CREATE TABLE `comment` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '评论ID',
@@ -185,7 +173,6 @@ CREATE TABLE `comment` (
   `user_id` int(11) NOT NULL COMMENT '用户ID',
   `business_id` int(11) DEFAULT 1 COMMENT '店铺ID(固定为1)',
   `content` text COLLATE utf8mb4_unicode_ci COMMENT '评论内容',
-  `score` tinyint(4) DEFAULT 5 COMMENT '评分(1-5)',
   `time` varchar(500) DEFAULT NULL COMMENT '评论时间',
   PRIMARY KEY (`id`),
   KEY `goods_id` (`goods_id`),
@@ -199,21 +186,21 @@ ALTER TABLE `comment`
   ADD CONSTRAINT `comment_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `comment_ibfk_3` FOREIGN KEY (`business_id`) REFERENCES `business` (`id`);
 
--- 11. 公告表
+-- 10. 公告表
 DROP TABLE IF EXISTS `notice`;
 CREATE TABLE `notice` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '公告ID',
   `title` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '标题', -- 加长长度
   `content` text COLLATE utf8mb4_unicode_ci COMMENT '内容',
   `time` varchar(500) DEFAULT NULL COMMENT '创建时间', -- 加长长度
-  `admin_id` int(11) NOT NULL COMMENT '创建人ID',
+  `business_id` int(11) NOT NULL COMMENT '创建人ID',
   PRIMARY KEY (`id`),
-  KEY `admin_id` (`admin_id`)
+  KEY `business_id` (`business_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='公告表';
 
 -- 公告表外键
 ALTER TABLE `notice`
-  ADD CONSTRAINT `notice_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `notice_ibfk_1` FOREIGN KEY (`business_id`) REFERENCES `business` (`id`) ON DELETE CASCADE;
 
 
 -- 设置商家ID为1

@@ -64,12 +64,6 @@ public class GoodsController {
         return Result.success(goods);
     }
 
-    @GetMapping("/selectTop15")
-    public Result selectTop15() {
-        List<Goods> list = goodsService.selectTop15();
-        return Result.success(list);
-    }
-
     /**
      * 查询所有
      */
@@ -94,12 +88,6 @@ public class GoodsController {
     @GetMapping("/selectByBusinessId")
     public Result selectByBusinessId(@RequestParam Integer id) {
         List<Goods> list = goodsService.selectByBusinessId(id);
-        return Result.success(list);
-    }
-
-    @GetMapping("/recommend")
-    public Result recommend() {
-        List<Goods> list = goodsService.recommend();
         return Result.success(list);
     }
 
