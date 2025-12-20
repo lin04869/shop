@@ -1,9 +1,14 @@
 package com.ouc.lenovoshop.controller;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.ouc.lenovoshop.common.Result;
+import com.ouc.lenovoshop.common.enums.ResultCodeEnum;
+import com.ouc.lenovoshop.common.enums.RoleEnum;
+import com.ouc.lenovoshop.entity.Account;
 import com.ouc.lenovoshop.entity.User;
+import com.ouc.lenovoshop.service.BusinessService;
 import com.ouc.lenovoshop.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -24,10 +29,64 @@ public class AuthController {
     @Resource
     private UserService userService;
 
+    @Resource
+    private BusinessService businessService;
+
     @Value("${spring.mail.username}")
     private String fromEmail;
 
     private static final Map<String, String> CODE_MAP = new ConcurrentHashMap<>();
+
+    /**
+     * 登录
+     */
+    @PostMapping("/login")
+    public Result login(@RequestBody Account account) {
+        if (ObjectUtil.isEmpty(account.getUsername()) || ObjectUtil.isEmpty(account.getPassword())
+                || ObjectUtil.isEmpty(account.getRole())) {
+            return Result.error(ResultCodeEnum.PARAM_LOST_ERROR);
+        }
+        if (RoleEnum.BUSINESS.name().equals(account.getRole())) {
+            account = businessService.login(account);
+        }
+        if (RoleEnum.USER.name().equals(account.getRole())) {
+            account = userService.login(account);
+        }
+        return Result.success(account);
+    }
+
+    /**
+     * 注册
+     */
+    @PostMapping("/register")
+    public Result register(@RequestBody Account account) {
+        if (StrUtil.isBlank(account.getUsername()) || StrUtil.isBlank(account.getPassword())
+                || ObjectUtil.isEmpty(account.getRole())) {
+            return Result.error(ResultCodeEnum.PARAM_LOST_ERROR);
+        }
+        if (RoleEnum.USER.name().equals(account.getRole())) {
+            userService.register(account);
+        }
+        return Result.success();
+    }
+
+    /**
+     * 修改密码
+     */
+    @PutMapping("/updatePassword")
+    public Result updatePassword(@RequestBody Account account) {
+        if (StrUtil.isBlank(account.getUsername()) || StrUtil.isBlank(account.getPassword())
+                || ObjectUtil.isEmpty(account.getNewPassword())) {
+            return Result.error(ResultCodeEnum.PARAM_LOST_ERROR);
+        }
+        if (RoleEnum.BUSINESS.name().equals(account.getRole())) {
+            businessService.updatePassword(account);
+        }
+        if (RoleEnum.USER.name().equals(account.getRole())) {
+            userService.updatePassword(account);
+        }
+        return Result.success();
+    }
 
     /**
      * 发送验证码

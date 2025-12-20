@@ -93,7 +93,7 @@ export default {
       this.$refs.formRef.validate(valid => {
         if (!valid) return;
         this.loading = true;
-        this.$request.post('/login', this.form).then(res => {
+        this.$request.post('/auth/login', this.form).then(res => {
           this.loading = false;
           if (res.code === '200') {
             const user = res.data;

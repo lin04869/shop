@@ -112,7 +112,7 @@ export default {
     save() {
       this.$refs.formRef.validate((valid) => {
         if (valid) {
-          this.$request.put('/updatePassword', this.user).then(res => {
+          this.$request.put('/auth/updatePassword', this.user).then(res => {
             if (res.code === '200') {
               this.$message.success('修改密码成功')
               this.$router.push('/login')

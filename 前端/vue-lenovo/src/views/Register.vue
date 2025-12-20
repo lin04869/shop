@@ -54,7 +54,7 @@ export default {
       this.$refs.regRef.validate(valid => {
         if (!valid) return;
         this.loading = true;
-        this.$request.post('/register', this.form).then(res => {
+        this.$request.post('/auth/register', this.form).then(res => {
           this.loading = false;
           if (res.code === '200') {
             this.$message.success('注册成功，请登录');
