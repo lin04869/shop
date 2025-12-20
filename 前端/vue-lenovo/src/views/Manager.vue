@@ -36,6 +36,10 @@
             <i class="el-icon-s-home"></i>
             <span slot="title">系统首页</span>
           </el-menu-item>
+          <el-menu-item index="/user">
+            <i class="el-icon-user"></i>
+            <span slot="title">用户管理</span>
+          </el-menu-item>
           <el-menu-item index="/goods">
             <i class="el-icon-menu"></i>
             <span slot="title">店铺商品</span>

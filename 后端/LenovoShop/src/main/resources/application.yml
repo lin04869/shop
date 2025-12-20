@@ -6,7 +6,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root   #本地数据库用户名
-    password: ""     #填本地数据库密码，也可以远程，需要改下面的ip 127.0.0.1:3306
+    password: "Gaoxiaolin88@"     #填本地数据库密码，也可以远程，需要改下面的ip 127.0.0.1:3306
     url: jdbc:mysql://127.0.0.1:3306/sqlnew?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&serverTimezone=GMT%2b8&allowPublicKeyRetrieval=true
   servlet:
     multipart:
