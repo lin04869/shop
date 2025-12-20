@@ -42,6 +42,13 @@ public class Result {
         return tResult;
     }
 
+    public static Result error(String msg) {
+        Result tResult = new Result();
+        tResult.setCode(ResultCodeEnum.SYSTEM_ERROR.code);
+        tResult.setMsg(msg);
+        return tResult;
+    }
+
     public static Result error(ResultCodeEnum resultCodeEnum) {
         Result tResult = new Result();
         tResult.setCode(resultCodeEnum.code);

@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 收藏业务处理
+ * 订单业务处理
  **/
 @Service
 public class OrdersService {
@@ -43,36 +43,28 @@ public class OrdersService {
             dbOrders.setBusinessId(cart.getBusinessId());
             dbOrders.setNum(cart.getNum());
             dbOrders.setPrice(cart.getNum() * cart.getGoodsPrice());
-            // 将中文状态转换为数据库期望的整数值（tinyint）
+            
+            // 处理订单状态映射 (中文 -> 数据库数值)
             String statusStr = dbOrders.getStatus();
             String mappedStatus = mapStatusToNumber(statusStr);
             dbOrders.setStatus(mappedStatus);
             ordersMapper.insert(dbOrders);
 
-            // 把购物车里对应的商品删掉
+            // 下单后移除购物车对应商品
             cartMapper.deleteById(cart.getId());
         }
     }
 
-    /**
-     * 把前端传来的状态文本映射为数据库中 tinyint 能接受的数字字符串
-     */
     private String mapStatusToNumber(String status) {
         if (status == null) return "0";
         status = status.trim();
         switch (status) {
-            case "待付款":
-                return "0";
-            case "待发货":
-                return "1";
-            case "待收货":
-                return "2";
+            case "待付款": return "0";
+            case "待发货": return "1";
+            case "待收货": return "2";
             case "已完成":
-                return "3";
-            case "已评价":
-                return "3";
+            case "已评价": return "3";
             default:
-                // 如果已经是数字字符串，直接返回；否则默认 0
                 try {
                     Integer.parseInt(status);
                     return status;
@@ -129,7 +121,7 @@ public class OrdersService {
      */
     public PageInfo<Orders> selectPage(Orders orders, Integer pageNum, Integer pageSize) {
         Account currentUser = TokenUtils.getCurrentUser();
-        // 安全检查：如果未获取到有效用户，直接返回空列表，防止数据泄露
+        // 安全检查：如果未获取到有效用户，返回空列表，防止数据泄露
         if (ObjectUtil.isNull(currentUser) || ObjectUtil.isNull(currentUser.getId())) {
             return new PageInfo<>(new ArrayList<>());
         }
@@ -140,7 +132,7 @@ public class OrdersService {
         if (RoleEnum.USER.name().equals(currentUser.getRole())) {
             orders.setUserId(currentUser.getId());
         } else if (!RoleEnum.BUSINESS.name().equals(currentUser.getRole())) {
-            // 如果既不是用户也不是商家（异常情况），返回空
+            // 如果既不是用户也不是商家，返回空
             return new PageInfo<>(new ArrayList<>());
         }
 

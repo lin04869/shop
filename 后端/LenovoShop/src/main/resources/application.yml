@@ -12,6 +12,21 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
+  # 邮件配置
+  mail:
+    host: smtp.qq.com
+    username: 414682773@qq.com
+    password: nkicltsqoelxbjcf
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            enable: true
 
 # 配置mybatis实体和xml映射
 mybatis:

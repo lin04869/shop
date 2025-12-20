@@ -36,20 +36,20 @@
     <el-dialog title="找回密码" :visible.sync="showForgot" width="460px">
       <div v-if="forgotStep === 'request'">
         <el-form :model="forgotForm" ref="forgotRef" label-position="top">
-          <el-form-item prop="account">
-            <el-input v-model="forgotForm.account" placeholder="输入注册邮箱或用户名"></el-input>
+          <el-form-item prop="email">
+            <el-input v-model="forgotForm.email" placeholder="输入注册邮箱"></el-input>
           </el-form-item>
         </el-form>
         <div style="text-align:right;">
           <el-button @click="showForgot=false">取消</el-button>
-          <el-button type="primary" :loading="forgotLoading" @click="requestReset">发送验证码 / 链接</el-button>
+          <el-button type="primary" :loading="forgotLoading" @click="requestReset">发送验证码</el-button>
         </div>
       </div>
 
       <div v-else>
         <el-form :model="forgotFormVerify" ref="verifyRef" label-position="top">
-          <el-form-item prop="token">
-            <el-input v-model="forgotFormVerify.token" placeholder="输入邮箱收到的验证码或 token"></el-input>
+          <el-form-item prop="code">
+            <el-input v-model="forgotFormVerify.code" placeholder="输入邮箱收到的验证码"></el-input>
           </el-form-item>
           <el-form-item prop="newPassword">
             <el-input v-model="forgotFormVerify.newPassword" placeholder="新密码" show-password></el-input>
@@ -80,12 +80,12 @@ export default {
         role: [{ required: true, message: '请选择用户身份', trigger: 'change' }]
       },
 
-      // 找回密码相关
+      // 找回密码
       showForgot: false,
-      forgotStep: 'request', // 'request' 或 'verify'
+      forgotStep: 'request',
       forgotLoading: false,
-      forgotForm: { account: '' },
-      forgotFormVerify: { token: '', newPassword: '', confirm: '' }
+      forgotForm: { email: '' },
+      forgotFormVerify: { code: '', newPassword: '', confirm: '' }
     }
   },
   methods: {
@@ -111,42 +111,49 @@ export default {
     openForgot() {
       this.showForgot = true;
       this.forgotStep = 'request';
-      this.forgotForm.account = '';
-      this.forgotFormVerify = { token: '', newPassword: '', confirm: '' };
+      this.forgotForm.email = '';
+      this.forgotFormVerify = { code: '', newPassword: '', confirm: '' };
     },
 
-    // 请求后端发送验证码或重置邮件（根据后端调整路径）
+    // 请求后端发送验证码
     requestReset() {
-      if (!this.forgotForm.account) { this.$message.warning('请填写邮箱或用户名'); return; }
+      if (!this.forgotForm.email) { this.$message.warning('请填写邮箱'); return; }
       this.forgotLoading = true;
-      this.$request.post('/api/auth/forgot/request', { account: this.forgotForm.account })
+      
+      this.$request.post('/auth/sendEmailCode?email=' + this.forgotForm.email)
         .then(res => {
           this.forgotLoading = false;
           if (res.code === '200') {
-            this.$message.success('已发送，请查看邮箱（或使用收到的验证码）');
+            this.$message.success('验证码已发送，请查看邮箱');
             this.forgotStep = 'verify';
-            // 若后端直接返回 token（测试场景），可预填： this.forgotFormVerify.token = res.data?.token || ''
           } else {
             this.$message.error(res.msg || '发送失败');
           }
         }).catch(()=>{ this.forgotLoading = false; });
     },
 
-    // 提交 token + 新密码 去后端重置
+    // 提交 验证码 + 新密码 去后端重置
     submitReset() {
       const p = this.forgotFormVerify;
-      if (!p.token || !p.newPassword) { this.$message.warning('请填写完整信息'); return; }
+      if (!p.code || !p.newPassword) { this.$message.warning('请填写完整信息'); return; }
       if (p.newPassword !== p.confirm) { this.$message.warning('两次密码不一致'); return; }
+      
       this.forgotLoading = true;
-      this.$request.post('/api/auth/forgot/reset', { token: p.token, newPassword: p.newPassword })
+      const payload = {
+        email: this.forgotForm.email,
+        code: p.code,
+        newPassword: p.newPassword
+      };
+      
+      this.$request.post('/auth/resetPassword', payload)
         .then(res => {
           this.forgotLoading = false;
           if (res.code === '200') {
             this.$message.success('重置成功，请使用新密码登录');
             this.showForgot = false;
             this.forgotStep = 'request';
-            this.forgotForm = { account: '' };
-            this.forgotFormVerify = { token: '', newPassword: '', confirm: '' };
+            this.forgotForm = { email: '' };
+            this.forgotFormVerify = { code: '', newPassword: '', confirm: '' };
           } else {
             this.$message.error(res.msg || '重置失败');
           }
