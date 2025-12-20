@@ -20,7 +20,6 @@
             <if test="email != null"> and email= #{email}</if>
             <if test="avatar != null"> and avatar= #{avatar}</if>
             <if test="isMember != null"> and is_member = #{isMember}</if>
-            <!-- role column does not exist in DB; ignore role filter -->
         </where>
     </select>
 
@@ -42,7 +41,6 @@
                 <if test="id != null">id,</if>
                 <if test="username != null">username,</if>
                 <if test="password != null">password,</if>
-                <!-- 'name' is mapped from 'username' in selects; do not insert 'name' column -->
                 <if test="phone != null">phone,</if>
                 <if test="email != null">email,</if>
                 <if test="avatar != null">avatar,</if>
@@ -53,7 +51,6 @@
                 <if test="id != null">#{id},</if>
                 <if test="username != null">#{username},</if>
                 <if test="password != null">#{password},</if>
-                <!-- skip inserting 'name' column (use username) -->
                 <if test="phone != null">#{phone},</if>
                 <if test="email != null">#{email},</if>
                 <if test="avatar != null">#{avatar},</if>
@@ -86,7 +83,6 @@
             <if test="memberSince != null">
                 member_since = #{memberSince},
             </if>
-            <!-- role column does not exist in DB; skip role updates -->
         </set>
         where id = #{id} 
     </update>

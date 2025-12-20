@@ -35,7 +35,7 @@
     <div class="search-row">
       <el-input
         v-model="searchQuery"
-        placeholder="搜索商品或商家..."
+        placeholder="搜索商品..."
         class="search-input"
         clearable
         prefix-icon="el-icon-search"

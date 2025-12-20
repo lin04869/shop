@@ -40,7 +40,7 @@
                 <template v-slot="scope">
                   <el-button size="mini" type="primary" v-if="scope.row.status === '待收货'" plain @click="updateStatus(scope.row, '已完成')">确认收货</el-button>
                   <el-button size="mini" type="primary" v-if="scope.row.status === '已完成'" plain @click="addComment(scope.row)">评价</el-button>
-                  <el-button size="mini" type="danger" plain @click="del(scope.row.id)">删除</el-button>
+                  <el-button size="mini" type="danger" plain @click="del(scope.row.id)">{{ scope.row.status === '待发货' ? '取消' : '删除' }}</el-button>
                 </template>
               </el-table-column>
             </el-table>
